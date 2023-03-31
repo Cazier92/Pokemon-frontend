@@ -22,28 +22,60 @@ export interface User {
 }
 
 export interface Pokemon {
-
+  name: string;
+  nickname?: string;
+  owner: { id: number };
+  originalOwner: { id: number };
+  level: number;
+  types: [Type];
+  pokedexNum: number;
+  potentialMoves: [PotentialMove];
+  moveSet: [Move];
+  spriteFront: string;
+  spriteBack: string;
+  evolves: boolean;
+  evolvesTo: [Evolution];
+  totalHP: number;
+  currentHP: number;
+  attack: number;
+  spAttack: number;
+  defense: number;
+  spDefense: number;
+  speed: number;
+  effortPointTotal: number;
+  statusCondition?: string | null;
+  captureRate: number;
+  growthRate: string;
+  levelBaseExp: number;
+  currentExp: number;
+  percentToNextLevel: number;
+  nextLevelExp: number;
+  baseExpYield: number;
+  holdItem?: object;
 }
 
 export interface Type {
-
+  slot: 1 | 2;
+  name: string;
 }
 
 export interface PotentialMove {
-
+  name: string;
+  url: string;
+  method: 'level-up' | 'egg' | 'machine' | 'tutor';
 }
 
 export interface Move {
   name: string;
   type: string;
-  accuracy?: number;
+  accuracy: number | null;
   effect: string;
-  effectChance?: number;
+  effectChance: number | null;
   damageClass: string;
   totalPP: number;
   currentPP: number;
-  power?: number,
-  priority: number,
+  power: number | null;
+  priority: number;
 }
 
 export interface Stat {
@@ -57,7 +89,7 @@ export interface Stat {
 export interface Evolution {
   name: string;
   trigger: string;
-  minLevel?: number;
-  item?: string;
-  heldItem?: string;
+  minLevel?: number | null;
+  item?: string | null;
+  heldItem?: string | null;
 }

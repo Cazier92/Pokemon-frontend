@@ -1,5 +1,5 @@
 // npm modules 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Routes, Route, useNavigate } from 'react-router-dom'
 
 // page components
@@ -15,17 +15,33 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 
 // services
 import * as authService from './services/authService'
+import * as pokemonService from './services/pokemonService'
 
 // stylesheets
 import './App.css'
 
 // types
 import { User } from './types/models'
+import { Pokemon } from './types/models'
 
 function App(): JSX.Element {
   const navigate = useNavigate()
   
   const [user, setUser] = useState<User | null>(authService.getUser())
+
+  const [allPokemon, setAllPokemon] = useState<Pokemon[]>([])
+
+  useEffect((): void => {
+    const fetchAllPokemon = async (): Promise<void> => {
+    try {
+        const pokemonData: Pokemon[] = await pokemonService.getAllPokemon()
+        setAllPokemon(pokemonData)
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchAllPokemon()
+  }, [])
 
   const handleLogout = (): void => {
     authService.logout()
@@ -36,6 +52,7 @@ function App(): JSX.Element {
   const handleAuthEvt = (): void => {
     setUser(authService.getUser())
   }
+
 
   return (
     <>
@@ -54,7 +71,7 @@ function App(): JSX.Element {
           path="/profiles"
           element={
             <ProtectedRoute user={user}>
-              <Profiles />
+              <Profiles allPokemon={allPokemon}/>
             </ProtectedRoute>
           }
         />
