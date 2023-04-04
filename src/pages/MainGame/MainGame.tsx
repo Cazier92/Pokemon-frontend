@@ -25,10 +25,65 @@ import './MainGame.css'
 const MainGame = (props: MainGameProps): JSX.Element => {
   const {allPokemon} = props
 
+  //^ State:
+
+  const [battleActive, setBattleActive] = useState<boolean>(false)
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'w':
+        keys.w.pressed = true
+        break
+      case 'a':
+        keys.a.pressed = true
+        break
+      case 's':
+        keys.s.pressed = true
+        break
+      case 'd':
+        keys.d.pressed = true
+        break
+    }
+  }
+
+  console.log(battleActive)
+
+
+
+  const handleKeyUp = (e: KeyboardEvent) => {
+    switch (e.key) {
+      case 'w':
+        keys.w.pressed = false
+        break
+      case 'a':
+        keys.a.pressed = false
+        break
+      case 's':
+        keys.s.pressed = false
+        break
+      case 'd':
+        keys.d.pressed = false
+        break
+    }
+  }
+  window.addEventListener('keydown', handleKeyDown)
+  window.addEventListener('keyup', handleKeyUp)
+
+  useEffect(() => {
+    if (battleActive === true) {
+
+    } else {
+    }
+  }, [battleActive])
+
+
   const offset = {
     x: -1790,
     y: -100,
   }
+
+  // const mediaQuery = window.matchMedia('(max-width: 768px)')
+  // console.log(mediaQuery)
 
   const collisionMap: number[][] = []
   const battleZoneMap: number[][] = []
@@ -71,8 +126,6 @@ const MainGame = (props: MainGameProps): JSX.Element => {
       }
     })
   })
-
-  // console.log(boundaries)
 
   const keys = {
     w: {
@@ -119,6 +172,8 @@ const MainGame = (props: MainGameProps): JSX.Element => {
     frames: {
       max: 1,
       hold: 10,
+      val: 0,
+      elapsed: 0,
     },
     animate: false,
     width: image.width,
@@ -134,38 +189,13 @@ const MainGame = (props: MainGameProps): JSX.Element => {
     frames: {
       max: 1,
       hold: 10,
+      val: 0,
+      elapsed: 0,
     },
     animate: false,
     width: foregroundImage.width,
     height: foregroundImage.height,
   }
-
-  // const player: Sprite = {
-  //   position: {
-  //     x: ((canvas.width / 2) - ((192 / 4) / 2)),
-  //     y: ((canvas.height / 2) - (68 / 2)),
-  //   },
-  //   image: playerDown,
-  //   frames: {
-  //     max: 4,
-  //     hold: 10,
-  //     val: 0,
-  //     elapsed: 0,
-  //   },
-  //   animate: false,
-  //   width: playerDown.width / 4,
-  //   height: playerDown.height,
-  //   sprites: {
-  //     up: playerUp,
-  //     down: playerDown,
-  //     left: playerLeft,
-  //     right: playerRight,
-  //   },
-  // }
-
-
-
-  // console.log(background)
 
   const movables = [background, ...boundaries, foreground, ...battleZones]
 
@@ -177,6 +207,11 @@ const MainGame = (props: MainGameProps): JSX.Element => {
       sprite.position.y + sprite.height - 5 >= boundary.position.y
     )
   } 
+
+  const overlappingArea = (sprite: Sprite, boundary: Boundary): number => {
+    const overlap = (Math.min(sprite.position.x + sprite.width, boundary.position.x + boundary.width) - Math.max(sprite.position.x, boundary.position.x)) * (Math.min(sprite.position.y + sprite.height, boundary.position.y + boundary.height) - Math.max(sprite.position.y, boundary.position.y))
+    return overlap
+  }
 
   const battle = {
     initiated: false
@@ -214,35 +249,12 @@ const MainGame = (props: MainGameProps): JSX.Element => {
           right: playerRight,
         },
       }
-      const playerXPlus: Sprite = {
-        position: {
-          x: player.position.x -3,
-          y: player.position.y,
-        },
-        image: playerDown,
-        frames: {
-          max: 4,
-          hold: 10,
-          val: 0,
-          elapsed: 0,
-        },
-        animate: false,
-        width: playerDown.width / 4,
-        height: playerDown.height,
-        sprites: {
-          up: playerUp,
-          down: playerDown,
-          left: playerLeft,
-          right: playerRight,
-        },
-      }
 
         const draw = (sprite: Sprite): void => {
           let value = 0
           if (sprite.frames.val) {
             value = sprite.frames.val
           }
-          // console.log(sprite.image)
           context.save()
           context.drawImage(
             sprite.image,
@@ -280,38 +292,10 @@ const MainGame = (props: MainGameProps): JSX.Element => {
         const animate = () => {
           const animationId = window.requestAnimationFrame(animate)
       
-          window.addEventListener('keydown', (e) => {
-            switch (e.key) {
-              case 'w':
-                keys.w.pressed = true
-                break
-              case 'a':
-                keys.a.pressed = true
-                break
-              case 's':
-                keys.s.pressed = true
-                break
-              case 'd':
-                keys.d.pressed = true
-                break
-            }
-          })
-          window.addEventListener('keyup', (e) => {
-            switch (e.key) {
-              case 'w':
-                keys.w.pressed = false
-                break
-              case 'a':
-                keys.a.pressed = false
-                break
-              case 's':
-                keys.s.pressed = false
-                break
-              case 'd':
-                keys.d.pressed = false
-                break
-            }
-          })
+          //^ Keyboard Event listeners:
+
+
+          //^ Draw Map, Boundaries, Player, and Foreground:
 
           draw(background)
           boundaries.forEach(boundary => {
@@ -329,35 +313,35 @@ const MainGame = (props: MainGameProps): JSX.Element => {
           if (battle.initiated) {
             return
           }
-          //! Activate Battle:
+
+          //^ Activate Battle:
+
+          if (keys.w.pressed || keys.a.pressed || keys.s.pressed || keys.d.pressed) {
+            for (let i = 0; i < battleZones.length; i++) {
+              const battleZone = battleZones[i]
+              if (
+                rectangularCollision(player, battleZone)
+                &&
+                (overlappingArea(player, battleZone)) > ((player.width * player.height) / 2)
+                &&
+                Math.random() < 0.02
+              ) {
+                console.log('WILD POKEMON ENCOUNTERED')
+                window.cancelAnimationFrame(animationId)
+                setBattleActive(true)
+                
+              }
+            }
+          }
 
 
-          //! Movement:
-          // for (let i = 0; i < boundaries.length; i++) {
-          //   const boundary = boundaries[i]
-          //   if (rectangularCollision(player, boundary)) {
-          //     // console.log('collision')
-          //     // movables.forEach(movable => {
-          //     //   movable.position.y += 3
-          //     // })
-          //     // moving = false
-          //     // break
-          //     // if (!rectangularCollision(playerXPlus, boundary)) {
-          //     //   moving = false
-          //     //   player.position.x = playerXPlus.position.x
-          //     //   console.log(player.position.x)
-          //     //   break
-          //     // }
-          //     moving = false
-          //     player.position.x += 3
-          //     break
-          //   }
-          // }
+          //^ Control Movement:
+
           if (keys.s.pressed) {
-            // console.log('S down')
             player.animate = true
-            
-            player.image = player.sprites.down
+            if (player.sprites) {
+              player.image = player.sprites.down
+            }
         
             for (let i = 0; i < boundaries.length; i++) {
               const boundary = boundaries[i]
@@ -365,10 +349,6 @@ const MainGame = (props: MainGameProps): JSX.Element => {
                 x: boundary.position.x,
                 y: boundary.position.y - 3
               }})) {
-                // console.log('collision')
-                // movables.forEach(movable => {
-                //   movable.position.y += 3
-                // })
                 moving = false
                 break
               }
@@ -381,20 +361,17 @@ const MainGame = (props: MainGameProps): JSX.Element => {
         
           }
           if (keys.w.pressed) {
-            // console.log('W down')
             player.animate = true
-            player.image = player.sprites.up
+            if (player.sprites) {
+              player.image = player.sprites.up
+            }
             for (let i = 0; i < boundaries.length; i++) {
               const boundary = boundaries[i]
               if (rectangularCollision(player, {...boundary, position: {
                 x: boundary.position.x,
                 y: boundary.position.y + 3
               }})) {
-                // console.log('collision')
                 moving = false
-                // movables.forEach(movable => {
-                //   movable.position.y -= 3
-                // })
                 break
               }
             }
@@ -404,19 +381,16 @@ const MainGame = (props: MainGameProps): JSX.Element => {
             })
           }
           if(keys.a.pressed) {
-            // console.log('A down')
             player.animate = true
-            player.image = player.sprites.left
+            if (player.sprites) {
+              player.image = player.sprites.left
+            }
             for (let i = 0; i < boundaries.length; i++) {
               const boundary = boundaries[i]
               if (rectangularCollision(player, {...boundary, position: {
                 x: boundary.position.x + 3,
                 y: boundary.position.y
               }})) {
-                // console.log('collision')
-                // movables.forEach(movable => {
-                //   movable.position.x -= 3
-                // })
                 moving = false
                 break
               }
@@ -427,20 +401,17 @@ const MainGame = (props: MainGameProps): JSX.Element => {
             })
           }
           if(keys.d.pressed) {
-            // console.log('D down')
             player.animate = true
-            player.image = player.sprites.right
+            if (player.sprites) {
+              player.image = player.sprites.right
+            }
             for (let i = 0; i < boundaries.length; i++) {
               const boundary = boundaries[i]
               if (rectangularCollision(player, {...boundary, position: {
                 x: boundary.position.x - 3,
                 y: boundary.position.y
               }})) {
-                // console.log('collision')
                 moving = false
-                // movables.forEach(movable => {
-                //   movable.position.x += 3
-                // })
                 break
               }
             }

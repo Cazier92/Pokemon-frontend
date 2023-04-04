@@ -83,8 +83,8 @@ export interface Position {
 export interface Frames {
       max: number;
       hold: number;
-      val?: number;
-      elapsed?: number;
+      val: number;
+      elapsed: number;
     }
     
 export interface Sprites {
