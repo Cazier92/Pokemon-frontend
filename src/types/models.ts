@@ -1,26 +1,4 @@
-/* ---------===== custom props ====--------- */
-
-
-
-/* ---------===== auth models =====--------- */
-
-export interface Profile {
-  name: string;
-  photo?: string;
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface User {
-  name: string;
-  email: string;
-  profile: { id: number };
-  id: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
+/* ---------===== custom models ====--------- */
 export interface Pokemon {
   name: string;
   nickname?: string;
@@ -93,3 +71,67 @@ export interface Evolution {
   item?: string | null;
   heldItem?: string | null;
 }
+
+/* Main Game Models: */
+
+
+export interface Position {
+    x: number;
+    y: number;
+  }
+  
+export interface Frames {
+      max: number;
+      hold: number;
+      val?: number;
+      elapsed?: number;
+    }
+    
+export interface Sprites {
+        up: HTMLImageElement;
+        down: HTMLImageElement;
+        left: HTMLImageElement;
+        right: HTMLImageElement;
+      }
+
+      
+export interface Sprite {
+    position: Position;
+    // velocity,
+    image: HTMLImageElement;
+    frames: Frames;
+    sprites?: Sprites;
+    animate: boolean;
+    width: number;
+    height: number;
+    // draw: () => void;
+    
+  }
+
+export interface Boundary {
+  position: Position;
+  width: 48;
+  height: 48;
+}
+
+
+
+/* ---------===== auth models =====--------- */
+
+export interface Profile {
+  name: string;
+  photo?: string;
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface User {
+  name: string;
+  email: string;
+  profile: { id: number };
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+}
+

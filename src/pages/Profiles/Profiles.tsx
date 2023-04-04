@@ -17,7 +17,6 @@ const Profiles = (props: ProfileProps): JSX.Element => {
 
   const {allPokemon} = props
 
-  console.log(allPokemon[0].name)
 
   useEffect((): void => {
     const fetchProfiles = async (): Promise<void> => {
@@ -40,12 +39,15 @@ const Profiles = (props: ProfileProps): JSX.Element => {
         <p key={profile.id}>{profile.name}</p>
       )}
       <h1>And this is a list of all Pokemon in database:</h1>
-      {allPokemon.map((pokemon) => 
-        <>
-        <h5>{pokemon.name}</h5>
-        <img src={pokemon.spriteFront} alt="" />
-        </>
-      )}
+      {allPokemon.length ? 
+        (allPokemon.map((pokemon) => 
+          <>
+          <h5>{pokemon.name}</h5>
+          <img src={pokemon.spriteFront} alt="" />
+          </>)) 
+          : 
+        (<h5>Loading...</h5>)
+      }
     </>
   )
 }
