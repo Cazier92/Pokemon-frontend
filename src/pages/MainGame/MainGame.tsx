@@ -73,24 +73,39 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   })
 
   // console.log(boundaries)
+
+  const keys = {
+    w: {
+      pressed: false
+    },
+    a: {
+      pressed: false
+    },
+    s: {
+      pressed: false
+    },
+    d: {
+      pressed: false
+    },
+  }
   
   const image = new Image()
-  image.src = '/public/PokemonGameMap.png'
+  image.src = '/PokemonGameMap.png'
 
   const foregroundImage = new Image()
-  foregroundImage.src = '/public/foregroundObj.png'
+  foregroundImage.src = '/foregroundObj.png'
 
   const playerDown = new Image()
-  playerDown.src = '/public/playerDown.png'
+  playerDown.src = '/playerDown.png'
 
   const playerUp = new Image()
-  playerUp.src = '/public/playerUp.png'
+  playerUp.src = '/playerUp.png'
 
   const playerLeft = new Image()
-  playerLeft.src = '/public/playerLeft.png'
+  playerLeft.src = '/playerLeft.png'
 
   const playerRight = new Image()
-  playerRight.src = '/public/playerRight.png'
+  playerRight.src = '/playerRight.png'
 
   
   const canvas = document.querySelector('canvas')
@@ -125,6 +140,47 @@ const MainGame = (props: MainGameProps): JSX.Element => {
     height: foregroundImage.height,
   }
 
+  // const player: Sprite = {
+  //   position: {
+  //     x: ((canvas.width / 2) - ((192 / 4) / 2)),
+  //     y: ((canvas.height / 2) - (68 / 2)),
+  //   },
+  //   image: playerDown,
+  //   frames: {
+  //     max: 4,
+  //     hold: 10,
+  //     val: 0,
+  //     elapsed: 0,
+  //   },
+  //   animate: false,
+  //   width: playerDown.width / 4,
+  //   height: playerDown.height,
+  //   sprites: {
+  //     up: playerUp,
+  //     down: playerDown,
+  //     left: playerLeft,
+  //     right: playerRight,
+  //   },
+  // }
+
+
+
+  // console.log(background)
+
+  const movables = [background, ...boundaries, foreground, ...battleZones]
+
+  const rectangularCollision = (sprite: Sprite, boundary: Boundary): boolean => {
+    return (
+      sprite.position.x + sprite.width >= boundary.position.x &&
+      sprite.position.x <= boundary.position.x + boundary.width &&
+      sprite.position.y + sprite.height / 2 <= boundary.position.y + boundary.height &&
+      sprite.position.y + sprite.height - 5 >= boundary.position.y
+    )
+  } 
+
+  const battle = {
+    initiated: false
+  }
   
   if (!canvas) {
     
@@ -135,26 +191,40 @@ const MainGame = (props: MainGameProps): JSX.Element => {
     } else {
       canvas.width = 1024
       canvas.height = 576
-      // context.drawImage(
-        //   image,
-        //   0,
-        //   0,
-        //   image.width,
-        //   image.height,
-        //   offset.x,
-        //   offset.y,
-        //   image.width,
-        //   image.height
-        //   )
+
+      const player: Sprite = {
+        position: {
+          x: ((canvas.width / 2) - ((192 / 4) / 2)),
+          y: ((canvas.height / 2) - (68 / 2)),
+        },
+        image: playerDown,
+        frames: {
+          max: 4,
+          hold: 10,
+          val: 0,
+          elapsed: 0,
+        },
+        animate: false,
+        width: playerDown.width / 4,
+        height: playerDown.height,
+        sprites: {
+          up: playerUp,
+          down: playerDown,
+          left: playerLeft,
+          right: playerRight,
+        },
+      }
+
         const draw = (sprite: Sprite): void => {
-          let val = 0
+          let value = 0
           if (sprite.frames.val) {
-            val = sprite.frames.val
+            value = sprite.frames.val
           }
+          // console.log(sprite.image)
           context.save()
           context.drawImage(
             sprite.image,
-            val * sprite.width,
+            value * sprite.width,
             0,
             sprite.image.width / sprite.frames.max,
             sprite.image.height,
@@ -180,16 +250,24 @@ const MainGame = (props: MainGameProps): JSX.Element => {
           }
         }
 
-        draw(background)
+        const drawPlayer = (sprite: Sprite): void => {
+          let value = 0
+          if (sprite.frames.val) {
+            value = sprite.frames.val
+          }
+          console.log(sprite.frames.val)
+
+        }
+
 
         const drawBoundary = (boundary: Boundary): void => {
           context.fillStyle = 'rgba(255, 0, 0, .5)'
           context.fillRect(boundary.position.x, boundary.position.y, boundary.width, boundary.height)
         }
 
-        boundaries.forEach(boundary => {
-          drawBoundary(boundary)
-        })
+        
+
+        
 
         const animate = () => {
           const animationId = window.requestAnimationFrame(animate)
@@ -226,36 +304,25 @@ const MainGame = (props: MainGameProps): JSX.Element => {
                 break
             }
           })
+
+          draw(background)
+          boundaries.forEach(boundary => {
+            drawBoundary(boundary)
+          })
+          battleZones.forEach(boundary => {
+            drawBoundary(boundary)
+          })
+          draw(player)
+          draw(foreground)
+
           
-          context.drawImage(
-            image,
-            0,
-            0,
-            image.width,
-            image.height,
-            offset.x,
-            offset.y,
-            image.width,
-            image.height
-          )
+          
         }
+
+        animate()
     }
   }
 
-  const keys = {
-    w: {
-      pressed: false
-    },
-    a: {
-      pressed: false
-    },
-    s: {
-      pressed: false
-    },
-    d: {
-      pressed: false
-    },
-  }
 
 
 
