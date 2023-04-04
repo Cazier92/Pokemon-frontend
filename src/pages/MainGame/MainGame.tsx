@@ -214,6 +214,28 @@ const MainGame = (props: MainGameProps): JSX.Element => {
           right: playerRight,
         },
       }
+      const playerXPlus: Sprite = {
+        position: {
+          x: player.position.x -3,
+          y: player.position.y,
+        },
+        image: playerDown,
+        frames: {
+          max: 4,
+          hold: 10,
+          val: 0,
+          elapsed: 0,
+        },
+        animate: false,
+        width: playerDown.width / 4,
+        height: playerDown.height,
+        sprites: {
+          up: playerUp,
+          down: playerDown,
+          left: playerLeft,
+          right: playerRight,
+        },
+      }
 
         const draw = (sprite: Sprite): void => {
           let value = 0
@@ -238,11 +260,11 @@ const MainGame = (props: MainGameProps): JSX.Element => {
           if (!sprite.animate) {
             return
           } 
-          if (sprite.frames.max > 1 && sprite.frames.elapsed) {
+          if (sprite.frames.max > 1) {
             sprite.frames.elapsed++
           }
-          if (sprite.frames.elapsed && sprite.frames.elapsed % sprite.frames.hold === 0) {
-            if (sprite.frames.val && sprite.frames.val < sprite.frames.max - 1) {
+          if (sprite.frames.elapsed % sprite.frames.hold === 0) {
+            if (sprite.frames.val < sprite.frames.max - 1) {
               sprite.frames.val++
             } else {
               sprite.frames.val = 0
@@ -250,24 +272,10 @@ const MainGame = (props: MainGameProps): JSX.Element => {
           }
         }
 
-        const drawPlayer = (sprite: Sprite): void => {
-          let value = 0
-          if (sprite.frames.val) {
-            value = sprite.frames.val
-          }
-          console.log(sprite.frames.val)
-
-        }
-
-
         const drawBoundary = (boundary: Boundary): void => {
           context.fillStyle = 'rgba(255, 0, 0, .5)'
           context.fillRect(boundary.position.x, boundary.position.y, boundary.width, boundary.height)
         }
-
-        
-
-        
 
         const animate = () => {
           const animationId = window.requestAnimationFrame(animate)
@@ -315,8 +323,132 @@ const MainGame = (props: MainGameProps): JSX.Element => {
           draw(player)
           draw(foreground)
 
-          
-          
+          let moving: boolean = true
+          player.animate = false
+
+          if (battle.initiated) {
+            return
+          }
+          //! Activate Battle:
+
+
+          //! Movement:
+          // for (let i = 0; i < boundaries.length; i++) {
+          //   const boundary = boundaries[i]
+          //   if (rectangularCollision(player, boundary)) {
+          //     // console.log('collision')
+          //     // movables.forEach(movable => {
+          //     //   movable.position.y += 3
+          //     // })
+          //     // moving = false
+          //     // break
+          //     // if (!rectangularCollision(playerXPlus, boundary)) {
+          //     //   moving = false
+          //     //   player.position.x = playerXPlus.position.x
+          //     //   console.log(player.position.x)
+          //     //   break
+          //     // }
+          //     moving = false
+          //     player.position.x += 3
+          //     break
+          //   }
+          // }
+          if (keys.s.pressed) {
+            // console.log('S down')
+            player.animate = true
+            
+            player.image = player.sprites.down
+        
+            for (let i = 0; i < boundaries.length; i++) {
+              const boundary = boundaries[i]
+              if (rectangularCollision(player, {...boundary, position: {
+                x: boundary.position.x,
+                y: boundary.position.y - 3
+              }})) {
+                // console.log('collision')
+                // movables.forEach(movable => {
+                //   movable.position.y += 3
+                // })
+                moving = false
+                break
+              }
+            }
+            if (moving)
+            movables.forEach(movable => {
+              movable.position.y -= 3
+            })
+            
+        
+          }
+          if (keys.w.pressed) {
+            // console.log('W down')
+            player.animate = true
+            player.image = player.sprites.up
+            for (let i = 0; i < boundaries.length; i++) {
+              const boundary = boundaries[i]
+              if (rectangularCollision(player, {...boundary, position: {
+                x: boundary.position.x,
+                y: boundary.position.y + 3
+              }})) {
+                // console.log('collision')
+                moving = false
+                // movables.forEach(movable => {
+                //   movable.position.y -= 3
+                // })
+                break
+              }
+            }
+            if (moving)
+            movables.forEach(movable => {
+              movable.position.y += 3
+            })
+          }
+          if(keys.a.pressed) {
+            // console.log('A down')
+            player.animate = true
+            player.image = player.sprites.left
+            for (let i = 0; i < boundaries.length; i++) {
+              const boundary = boundaries[i]
+              if (rectangularCollision(player, {...boundary, position: {
+                x: boundary.position.x + 3,
+                y: boundary.position.y
+              }})) {
+                // console.log('collision')
+                // movables.forEach(movable => {
+                //   movable.position.x -= 3
+                // })
+                moving = false
+                break
+              }
+            }
+            if (moving)
+            movables.forEach(movable => {
+              movable.position.x += 3
+            })
+          }
+          if(keys.d.pressed) {
+            // console.log('D down')
+            player.animate = true
+            player.image = player.sprites.right
+            for (let i = 0; i < boundaries.length; i++) {
+              const boundary = boundaries[i]
+              if (rectangularCollision(player, {...boundary, position: {
+                x: boundary.position.x - 3,
+                y: boundary.position.y
+              }})) {
+                // console.log('collision')
+                moving = false
+                // movables.forEach(movable => {
+                //   movable.position.x += 3
+                // })
+                break
+              }
+            }
+            if (moving)
+            movables.forEach(movable => {
+              movable.position.x -= 3
+            })
+          }
         }
 
         animate()
