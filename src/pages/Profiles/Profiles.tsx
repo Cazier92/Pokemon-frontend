@@ -36,7 +36,7 @@ const Profiles = (props: ProfileProps): JSX.Element => {
     <>
       <h1>Hello. This is a list of all the profiles.</h1>
       {profiles.map((profile: Profile) =>
-        <p key={profile.id}>{profile.name}</p>
+        <p key={profile._id}>{profile.name}</p>
       )}
       <h1>And this is a list of all Pokemon in database:</h1>
       {allPokemon.length ? 

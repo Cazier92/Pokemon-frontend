@@ -1,4 +1,6 @@
 /* ---------===== custom models ====--------- */
+
+//^ Pokemon models:
 export interface Pokemon {
   name: string;
   nickname?: string;
@@ -72,7 +74,7 @@ export interface Evolution {
   heldItem?: string | null;
 }
 
-/* Main Game Models: */
+//^ Game Models:
 
 
 export interface Position {
@@ -114,6 +116,32 @@ export interface Boundary {
   height: 48;
 }
 
+//^ Map Models:
+
+export interface Map {
+  name: string;
+  backgroundUrl: string;
+  foregroundUrl: string;
+  hardBoundaries: number[];
+  battleZones: number[];
+  waterBoundaries: number[];
+  waterFallBoundaries: number[];
+  whirlPoolBoundaries: number[];
+  doorBoundaries: number[];
+  offset: Offset;
+  newMapBoundaries: NewMapBoundary[]
+}
+
+export interface Offset {
+  x: number;
+  y: number;
+}
+
+export interface NewMapBoundary {
+  name: string;
+  linksTo: string;
+  boundaries: number[];
+}
 
 
 /* ---------===== auth models =====--------- */
@@ -121,7 +149,12 @@ export interface Boundary {
 export interface Profile {
   name: string;
   photo?: string;
-  id: number;
+  _id: string;
+  wallet: number;
+  party: Pokemon[];
+  pokemonPC: Pokemon[];
+  currentMap: string;
+  coordinates: Offset;
   createdAt: string;
   updatedAt: string;
 }
@@ -129,7 +162,7 @@ export interface Profile {
 export interface User {
   name: string;
   email: string;
-  profile: { id: number };
+  profile: string;
   id: number;
   createdAt: string;
   updatedAt: string;

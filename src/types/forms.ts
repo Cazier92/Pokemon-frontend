@@ -1,5 +1,16 @@
 /* ---------==== custom forms ====--------- */
 
+import { Pokemon } from "./models";
+import { Offset } from "./models";
+
+export interface ProfileData {
+  party?: Pokemon[];
+  pokemonPC?: Pokemon[];
+  wallet?: number;
+  currentMap?: string;
+  coordinates?: Offset;
+}
+
 
 
 /* ---------===== auth forms =====--------- */

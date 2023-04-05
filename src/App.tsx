@@ -17,6 +17,8 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 // services
 import * as authService from './services/authService'
 import * as pokemonService from './services/pokemonService'
+import * as profileService from './services/profileService'
+import * as mapService from './services/mapService'
 
 // stylesheets
 import './App.css'
@@ -24,13 +26,22 @@ import './App.css'
 // types
 import { User } from './types/models'
 import { Pokemon } from './types/models'
+import { Profile } from './types/models'
+import { Map } from './types/models'
+
+// forms
+import { ProfileData } from './types/forms'
 
 function App(): JSX.Element {
   const navigate = useNavigate()
   
   const [user, setUser] = useState<User | null>(authService.getUser())
-
+  const [userProfile, setUserProfile] = useState<Profile>()
+  const [allProfiles, setAllProfiles] = useState<Profile[]>()
   const [allPokemon, setAllPokemon] = useState<Pokemon[]>([])
+  const [currentMap, setCurrentMap] = useState<Map>()
+  const [updateMap, setUpdateMap] = useState<boolean>(false)
+  const [profileData, setProfileData] = useState<ProfileData>()
 
   useEffect((): void => {
     const fetchAllPokemon = async (): Promise<void> => {
@@ -44,6 +55,34 @@ function App(): JSX.Element {
     fetchAllPokemon()
   }, [])
 
+  useEffect((): void => {
+    const fetchAllProfiles = async (): Promise<void> => {
+    try {
+        const profilesData: Profile[] = await profileService.getAllProfiles()
+        setAllProfiles(profilesData)
+        setUserProfile(profilesData.find(profile => profile._id === user?.profile))
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchAllProfiles()
+  }, [user, updateMap])
+
+  useEffect((): void => {
+    const fetchMap = async (): Promise<void> => {
+    try {
+      if (userProfile) {
+        const mapData: Map = await mapService.getMap(userProfile?.currentMap)
+        setCurrentMap(mapData)
+      }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetchMap()
+  }, [userProfile, updateMap])
+
+
   const handleLogout = (): void => {
     authService.logout()
     setUser(null)
@@ -52,6 +91,17 @@ function App(): JSX.Element {
 
   const handleAuthEvt = (): void => {
     setUser(authService.getUser())
+  }
+
+  const handleUpdateProfile = async (profileData: ProfileData, _id: Profile['_id']): Promise<void> => {
+    try {
+      const updatedProfile = await profileService.updateProfile(profileData, _id)
+      // setUserProfile(updatedProfile)
+      console.log(updatedProfile)
+      setUpdateMap(!updateMap)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
 
@@ -80,7 +130,7 @@ function App(): JSX.Element {
           path="/maingame"
           element={
             <ProtectedRoute user={user}>
-              <MainGame allPokemon={allPokemon}/>
+              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile}/>
             </ProtectedRoute>
           }
         />
