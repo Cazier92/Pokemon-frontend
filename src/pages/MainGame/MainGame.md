@@ -3,7 +3,7 @@
 
 ## Backend & Frontend:
 
-- [ ] Integrate User Profile into app!
+- [X] Integrate User Profile into app!
 
 
 

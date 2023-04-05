@@ -1,0 +1,24 @@
+.battle-screen {
+  position: absolute;
+  background-color: white;
+  height: 100vh;
+  width: 100;
+  top: 35vh;
+}
+
+#battle-canvas {
+  position: relative;
+  /* background-color: black; */
+  top: 0;
+  margin: 0;
+}
+
+.canvas-div {
+  background-color: black;
+  padding: 5vmin;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}

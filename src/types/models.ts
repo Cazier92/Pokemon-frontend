@@ -106,8 +106,8 @@ export interface Sprite {
     animate: boolean;
     width: number;
     height: number;
-    // draw: () => void;
-    
+    isPokemon?: boolean;
+    playerPok?: boolean;
   }
 
 export interface Boundary {

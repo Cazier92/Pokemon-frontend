@@ -236,22 +236,10 @@ const MainGame = (props: MainGameProps): JSX.Element => {
       return overlap
     }
   
-    // const battle = {
-    //   initiated: false
-    // }
-  
     const canvas = document.querySelector('canvas')
-    // if (canvas) {
-    //   setGameCanvas(canvas)
-    // }
-    
-    // if (!canvas) {
-      
-    // } else {
-      const context = canvas?.getContext('2d')
-      // if (!context) {
-        
-      // } else {
+
+    const context = canvas?.getContext('2d')
+
         if (canvas) {
           canvas.width = 1024
           canvas.height = 576
@@ -353,9 +341,6 @@ const MainGame = (props: MainGameProps): JSX.Element => {
             let moving: boolean = true
             player.animate = false
   
-            // if (battle.initiated) {
-            //   return
-            // }
             if (battleActive) {
               return
             }
@@ -366,7 +351,7 @@ const MainGame = (props: MainGameProps): JSX.Element => {
                 for (let i = 0; i < battleZones.length; i++) {
                   const battleZone = battleZones[i]
                   if (
-                    rectangularCollision(player, battleZone) && (overlappingArea(player, battleZone)) > ((player.width * player.height) / 2) && (randomNum < 0.01)
+                    rectangularCollision(player, battleZone) && (overlappingArea(player, battleZone)) > ((player.width * player.height) / 2) && (randomNum < 0.004)
                   ) {
                     window.cancelAnimationFrame(animationId)
                     setBattleActive(true)
@@ -490,6 +475,56 @@ const MainGame = (props: MainGameProps): JSX.Element => {
               }
             }
           }
+
+          let opponent: Sprite
+          let playerPok: Sprite
+      
+          if (newPokemon) {
+            const opponentImg = new Image()
+            opponentImg.src = `${newPokemon.spriteFront}`
+            opponentImg.className = 'opponent'
+      
+            opponent = {
+              position: {
+                x: 700,
+                y: -10,
+              },
+              image: opponentImg,
+              frames: {
+                max: 1,
+                hold: 10,
+                val: 0,
+                elapsed: 0,
+              },
+              animate: false,
+              width:  opponentImg.width,
+              height: opponentImg.height,
+              isPokemon: true
+            }
+          }
+          if (newPokemon) {
+            const playerImg = new Image()
+            playerImg.src = `${newPokemon.spriteBack}`
+            playerImg.className = 'opponent'
+      
+            playerPok = {
+              position: {
+                x: 200,
+                y: 50,
+              },
+              image: playerImg,
+              frames: {
+                max: 1,
+                hold: 10,
+                val: 0,
+                elapsed: 0,
+              },
+              animate: false,
+              width:  playerImg.width,
+              height: playerImg.height,
+              isPokemon: true
+            }
+          }
   
           animate()
   
@@ -502,14 +537,14 @@ const MainGame = (props: MainGameProps): JSX.Element => {
           return (
             <>
               <h1>Main Game Page</h1>
-              {newPokemon ? (
+              {/* {newPokemon ? (
                 <>
                   <img src={newPokemon.spriteFront} alt="" />
                   <img src={newPokemon.spriteBack} alt="" />
                   <p>{newPokemon.name}</p>
                   <p>{newPokemon.level}</p>
                   <p>Moves:</p>
-                  {newPokemon.moveSet.map(move => {
+                  {newPokemon.moveSet?.map(move => {
                     return (
                       <p>{move.name}</p>
 
@@ -519,10 +554,12 @@ const MainGame = (props: MainGameProps): JSX.Element => {
               )
               :
               (<></>)
-              }
+              } */}
               <canvas id='canvas'></canvas>
               <button onClick={() => battleUnInit()}>Test</button>
-              {battleActive ? (<BattleScreen battleUnInit={battleUnInit}/>) : (<></>) }
+              {battleActive ? (
+              <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} />
+              ) : (<></>) }
               
             </>
           )

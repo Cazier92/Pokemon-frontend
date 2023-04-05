@@ -1,5 +1,7 @@
 canvas {
   margin-left: 5vmin;
+  position: fixed;
+  top: 35vh;
 }
 
 /* img {
