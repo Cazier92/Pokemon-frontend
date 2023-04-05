@@ -38,7 +38,7 @@ async function addPhoto(
 
 async function updateProfile(
   profileData: ProfileData, 
-  _id: string
+  _id: Profile['_id']
 ): Promise<Profile> {
   try {
     const res = await fetch(`${BASE_URL}/${_id}/update`, {

@@ -26,12 +26,16 @@ interface MainGameProps {
   allPokemon: Pokemon[];
   userProfile: Profile | undefined;
   currentMap: Map | undefined;
-  handleUpdateProfile: (profileData: ProfileData, _id: Profile['_id']) => Promise<void>
+  handleUpdateProfile: (profileData: ProfileData, _id: Profile['_id']) => Promise<void>;
+  onLand: boolean;
+  setOnLand: React.Dispatch<React.SetStateAction<boolean>>;
+  newPokemon: Pokemon | undefined;
+  handleGeneratePokemon: (num: Pokemon['pokedexNum'], level: Pokemon['level']) => Promise<void>;
 }
 
 import './MainGame.css'
 const MainGame = (props: MainGameProps): JSX.Element => {
-  const {allPokemon, userProfile, currentMap, handleUpdateProfile} = props
+  const {allPokemon, userProfile, currentMap, handleUpdateProfile, onLand, setOnLand, newPokemon, handleGeneratePokemon} = props
 
   //^ State:
 
@@ -114,6 +118,7 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   
 
   if (currentMap && userProfile) {
+    
 
     const image = new Image()
     image.src = currentMap.backgroundUrl
@@ -356,31 +361,36 @@ const MainGame = (props: MainGameProps): JSX.Element => {
             }
   
             //^ Activate Battle:
-  
-            if (keys.w.pressed || keys.a.pressed || keys.s.pressed || keys.d.pressed) {
-              for (let i = 0; i < battleZones.length; i++) {
-                const battleZone = battleZones[i]
-                if (
-                  rectangularCollision(player, battleZone) && (overlappingArea(player, battleZone)) > ((player.width * player.height) / 2) && (randomNum < 0.01)
-                ) {
-                  console.log('WILD POKEMON ENCOUNTERED')
-                  window.cancelAnimationFrame(animationId)
-                  // battle.initiated = true
-                  // setX(newX)
-                  // setY(newY)
-
-                  setBattleActive(true)
-                  handleUpdateProfile({
-                    coordinates: {
-                      x: (userProfile.coordinates.x + newX),
-                      y: (userProfile.coordinates.y + newY),
-                    }
-                  }, userProfile._id)
-                  
-                  
-                  break
-                } else {
-                  randomNum = (Math.random())
+            if(onLand) {
+              if (keys.w.pressed || keys.a.pressed || keys.s.pressed || keys.d.pressed) {
+                for (let i = 0; i < battleZones.length; i++) {
+                  const battleZone = battleZones[i]
+                  if (
+                    rectangularCollision(player, battleZone) && (overlappingArea(player, battleZone)) > ((player.width * player.height) / 2) && (randomNum < 0.01)
+                  ) {
+                    window.cancelAnimationFrame(animationId)
+                    setBattleActive(true)
+                    handleUpdateProfile({
+                      coordinates: {
+                        x: (userProfile.coordinates.x + newX),
+                        y: (userProfile.coordinates.y + newY),
+                        land: true
+                      }
+                    }, userProfile._id)
+                    console.log('WILD POKEMON ENCOUNTERED')
+                    let minLevel = currentMap.grassPokemon.minLevel
+                    let maxLevel = currentMap.grassPokemon.maxLevel
+                    const pokemonFound = currentMap.grassPokemon.pokedexNums
+                    const pokemonLevel = (Math.floor(Math.random() * ((maxLevel + 1) - minLevel) + minLevel))
+                    let pokemonIdx = (Math.floor(Math.random() * pokemonFound.length))
+                    const pokemonNum = pokemonFound[pokemonIdx]
+                    console.log('num:', pokemonNum, 'level:', pokemonLevel)
+                    handleGeneratePokemon(pokemonNum, pokemonLevel)
+                    
+                    break
+                  } else {
+                    randomNum = (Math.random())
+                  }
                 }
               }
             }
@@ -492,11 +502,28 @@ const MainGame = (props: MainGameProps): JSX.Element => {
           return (
             <>
               <h1>Main Game Page</h1>
-              <p>New X: {newX}</p>
-              <p>New Y: {y}</p>
+              {newPokemon ? (
+                <>
+                  <img src={newPokemon.spriteFront} alt="" />
+                  <img src={newPokemon.spriteBack} alt="" />
+                  <p>{newPokemon.name}</p>
+                  <p>{newPokemon.level}</p>
+                  <p>Moves:</p>
+                  {newPokemon.moveSet.map(move => {
+                    return (
+                      <p>{move.name}</p>
+
+                    )
+                  })}
+                </>
+              )
+              :
+              (<></>)
+              }
               <canvas id='canvas'></canvas>
               <button onClick={() => battleUnInit()}>Test</button>
               {battleActive ? (<BattleScreen battleUnInit={battleUnInit}/>) : (<></>) }
+              
             </>
           )
   } else {

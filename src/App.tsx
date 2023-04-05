@@ -19,6 +19,7 @@ import * as authService from './services/authService'
 import * as pokemonService from './services/pokemonService'
 import * as profileService from './services/profileService'
 import * as mapService from './services/mapService'
+import * as apiService from './services/apiService'
 
 // stylesheets
 import './App.css'
@@ -42,6 +43,8 @@ function App(): JSX.Element {
   const [currentMap, setCurrentMap] = useState<Map>()
   const [updateMap, setUpdateMap] = useState<boolean>(false)
   const [profileData, setProfileData] = useState<ProfileData>()
+  const [onLand, setOnLand] = useState<boolean>(true)
+  const [newPokemon, setNewPokemon] = useState<Pokemon>()
 
   useEffect((): void => {
     const fetchAllPokemon = async (): Promise<void> => {
@@ -67,6 +70,12 @@ function App(): JSX.Element {
     }
     fetchAllProfiles()
   }, [user, updateMap])
+
+  useEffect(():void => {
+    if (userProfile) {
+      setOnLand(userProfile.coordinates.land)
+    }
+  }, [userProfile])
 
   useEffect((): void => {
     const fetchMap = async (): Promise<void> => {
@@ -104,6 +113,16 @@ function App(): JSX.Element {
     }
   }
 
+  const handleGeneratePokemon = async (num: Pokemon['pokedexNum'], level: Pokemon['level']): Promise<void> => {
+    try {
+      const newPokemon = await apiService.generatePokemon(num, level)
+      setNewPokemon(newPokemon)
+      console.log(newPokemon)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
 
   return (
     <>
@@ -130,7 +149,7 @@ function App(): JSX.Element {
           path="/maingame"
           element={
             <ProtectedRoute user={user}>
-              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile}/>
+              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile} onLand={onLand} setOnLand={setOnLand} newPokemon={newPokemon} handleGeneratePokemon={handleGeneratePokemon}/>
             </ProtectedRoute>
           }
         />

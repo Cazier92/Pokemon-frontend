@@ -4,8 +4,8 @@
 export interface Pokemon {
   name: string;
   nickname?: string;
-  owner: { id: number };
-  originalOwner: { id: number };
+  owner?: { id: number };
+  originalOwner?: { id: number };
   level: number;
   types: [Type];
   pokedexNum: number;
@@ -122,6 +122,7 @@ export interface Map {
   name: string;
   backgroundUrl: string;
   foregroundUrl: string;
+  grassPokemon: PokemonFound;
   hardBoundaries: number[];
   battleZones: number[];
   waterBoundaries: number[];
@@ -129,12 +130,19 @@ export interface Map {
   whirlPoolBoundaries: number[];
   doorBoundaries: number[];
   offset: Offset;
-  newMapBoundaries: NewMapBoundary[]
+  newMapBoundaries: NewMapBoundary[];
+}
+
+export interface PokemonFound {
+  pokedexNums: [Pokemon['pokedexNum']];
+  minLevel: Pokemon['level'];
+  maxLevel: Pokemon['level'];
 }
 
 export interface Offset {
   x: number;
   y: number;
+  land: boolean;
 }
 
 export interface NewMapBoundary {
