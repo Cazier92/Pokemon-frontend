@@ -115,15 +115,6 @@ const MainGame = (props: MainGameProps): JSX.Element => {
     }
   }
 
-  // if (userProfile && userProfile.party && userProfile.party.length) {
-  //   useEffect((): void => {
-  //     const findPartyPokemon = async (): Promise<void> => {
-  //       const partyPokemon = await pokemonService.findPokemon(userProfile.party[0])
-  //       setPartyPokemon(partyPokemon)
-  //     }
-  //   }, [])
-  // }
-
   if (currentMap && userProfile) {
     if (partyPokemon) {
       
@@ -545,35 +536,16 @@ const MainGame = (props: MainGameProps): JSX.Element => {
             return (
               <>
                 <h1>Main Game Page</h1>
-                {/* {newPokemon ? (
-                  <>
-                    <img src={newPokemon.spriteFront} alt="" />
-                    <img src={newPokemon.spriteBack} alt="" />
-                    <p>{newPokemon.name}</p>
-                    <p>{newPokemon.level}</p>
-                    <p>Moves:</p>
-                    {newPokemon.moveSet?.map(move => {
-                      return (
-                        <p>{move.name}</p>
-  
-                      )
-                    })}
-                  </>
-                )
-                :
-                (<></>)
-                } */}
                 <canvas id='canvas'></canvas>
                 <button onClick={() => battleUnInit()}>Test</button>
                 {battleActive ? (
-                <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} userProfile={userProfile} partyPokemon={partyPokemon}/>
+                <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} userProfile={userProfile} partyPokemon={partyPokemon} capPokemon={capPokemon}/>
                 ) : (<></>) }
               </>
             )
       
     } else {
       if (starterPokemon) {
-        // console.log(starterPokemon)
       } else {
         handleGenerateStarters([1, 4, 7])
       }

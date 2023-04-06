@@ -12,12 +12,13 @@ interface BattleScreenProps {
   newPokemon: Pokemon | undefined;
   userProfile: Profile;
   partyPokemon: Pokemon | undefined;
+  capPokemon: (pokemon: Pokemon) => string | undefined;
 }
 
 import './BattleScreen.css'
 
 const BattleScreen = (props: BattleScreenProps): JSX.Element => {
-  const {battleUnInit, newPokemon, userProfile, partyPokemon} = props
+  const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon} = props
 
   const canvas = document.querySelector<HTMLCanvasElement>('#battle-canvas')
   const context = canvas?.getContext('2d')
@@ -52,7 +53,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     const opponentPok: Sprite = {
       position: {
         x: 720,
-        y: 15,
+        y: 30,
       },
       image: opponentImg,
       frames: {
@@ -74,7 +75,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     const playerPok = {
       position: {
         x: 170,
-        y: 140,
+        y: 145,
       },
       image: playerImg,
       frames: {
@@ -159,7 +160,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           (<>
           <div className='health-box' id='opponent-health'>
             <div className='pokemon-info'>
-              <p className='pokemon-name'>{(newPokemon.name.charAt(0).toUpperCase() + newPokemon.name.slice(1))}</p>
+              <p className='pokemon-name'>{capPokemon(newPokemon)}</p>
               <p className='pokemon-level'>Level: {newPokemon.level}</p>
             </div>
             <div className='health-bar'>
@@ -168,6 +169,31 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
                 <div className='health-empty' id='opponent-health-empty'></div>
                 <div className='health-percent' id='opponent-health-percent'></div>
   
+              </div>
+            </div>
+          </div>
+          </>) : (<></>)}
+          {partyPokemon ? 
+          (<>
+          <div className='health-box' id='user-health'>
+            <div className='pokemon-info'>
+              <p className='pokemon-name'>{capPokemon(partyPokemon)}</p>
+              <p className='pokemon-level'>Level: {partyPokemon.level}</p>
+            </div>
+            <div className='health-bar'>
+              <p className='hp'>HP:</p>
+              <div className='health-sub'>
+                <div className='health-empty' id='player-health-empty'></div>
+                <div className='health-percent' id='player-health-percent'></div>
+              </div>
+            </div>
+          </div>
+          <div className='experience-box'>
+            <div className='exp-bar'>
+              <p className='exp'>Exp:</p>
+              <div className='exp-sub'>
+                <div className='exp-empty'></div>
+                <div className='exp-percent'></div>
               </div>
             </div>
           </div>

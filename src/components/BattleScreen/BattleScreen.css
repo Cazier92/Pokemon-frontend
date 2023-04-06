@@ -25,7 +25,7 @@
 
 .health-box {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   background-color: white;
   width: 35%;
   height: 12%;
@@ -37,10 +37,33 @@
   margin: 0;
 }
 
+.experience-box {
+  position: relative;
+  z-index: 1;
+  background-color: black;
+  width: 35%;
+  height: 12%;
+  border: 5px solid black;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  top: 50%;
+  left: 59%;
+    box-shadow: rgba(0, 0, 0, .5) 15px 12px 8px 5px;
+}
+
 #opponent-health {
-  top: 20%;
+  top: 46%;
   left: 6%;
   box-shadow: rgba(0, 0, 0, .8) 15px 15px 8px 5px;
+}
+
+#user-health {
+  top: 60%;
+  left: 58%;
+  /* box-shadow: rgba(0, 0, 0, .8) 15px 15px 8px 5px; */
 }
 
 .pokemon-info {
@@ -77,15 +100,41 @@
   top: 30%;
 }
 
+.exp-bar {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: -40%;
+  top: 55%;
+}
+
 .health-sub {
   display: flex;
   margin: 0;
   align-items: center;
+}
 
+.exp-sub {
+  display: flex;
+  margin: 0;
+  align-items: center;
 }
 
 .health-empty {
   background-color: rgba(0, 0, 0, .3);
+  width: 75%;
+  height: 15px;
+  position: absolute;
+  border-radius: 10px;
+}
+
+.exp-empty {
+  background-color: rgba(255, 255, 255, .3);
   width: 75%;
   height: 15px;
   position: absolute;
@@ -100,7 +149,23 @@
   border-radius: 10px;
 }
 
+.exp-percent {
+  background-color: lime;
+  width: 75%;
+  height: 15px;
+  position: absolute;
+  border-radius: 10px;
+}
+
 .hp {
+  padding-right: 20px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.exp {
+  color: white;
   padding-right: 20px;
   margin: 0;
   font-size: 20px;
