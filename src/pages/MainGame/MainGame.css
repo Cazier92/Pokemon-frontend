@@ -4,6 +4,34 @@ canvas {
   top: 35vh;
 }
 
-/* img {
-  max-width: 100%;
-} */
+.starter-pok-header {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 5vh;
+}
+
+.starter-pok-div {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.starter-pok {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+}
+
+.starter-pok-name {
+  font-weight: 700;
+}
+
+.starter-pok-img {
+  cursor: pointer;
+  min-width: 10vw;
+}

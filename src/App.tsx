@@ -45,6 +45,8 @@ function App(): JSX.Element {
   const [profileData, setProfileData] = useState<ProfileData>()
   const [onLand, setOnLand] = useState<boolean>(true)
   const [newPokemon, setNewPokemon] = useState<Pokemon>()
+  const [starterPokemon, setStarterPokemon] = useState<Pokemon[]>()
+  const [profileUpdate, setProfileUpdate] = useState<boolean>(false)
 
   useEffect((): void => {
     const fetchAllPokemon = async (): Promise<void> => {
@@ -69,10 +71,26 @@ function App(): JSX.Element {
       }
     }
     fetchAllProfiles()
-  }, [user, updateMap])
+  }, [user, updateMap, profileUpdate])
+
+  useEffect((): void => {
+    if (userProfile) {
+      if (!userProfile.pack) {
+        const associatePack = async (): Promise<void> => {
+          try {
+            const updatedProfile: Profile = await profileService.associatePack()
+            setUserProfile(updatedProfile)
+          } catch (error) {
+            console.log(error)
+          }
+        }
+        associatePack()
+      }
+    }
+  }, [userProfile])
 
   useEffect(():void => {
-    if (userProfile) {
+    if (userProfile?.coordinates.land) {
       setOnLand(userProfile.coordinates.land)
     }
   }, [userProfile])
@@ -117,7 +135,30 @@ function App(): JSX.Element {
     try {
       const newPokemon = await apiService.generatePokemon(num, level)
       setNewPokemon(newPokemon)
-      console.log(newPokemon)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleGenerateStarters = async (nums: number[]): Promise<void> => {
+    try {
+      if (nums.length === 3) {
+        const starter1 = await apiService.generatePokemon(nums[0], 5)
+        const starter2 = await apiService.generatePokemon(nums[1], 5)
+        const starter3 = await apiService.generatePokemon(nums[2], 5)
+        setStarterPokemon([starter1, starter2, starter3])
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleAddToParty = async (userId: Profile['_id'], pokemonId: Pokemon['_id']): Promise<void> => {
+    try {
+      const updatedProfile = await pokemonService.addPokemonToParty(userId, pokemonId)
+      console.log(updatedProfile)
+      setStarterPokemon(undefined)
+      setProfileUpdate(!profileUpdate)
     } catch (error) {
       console.log(error)
     }
@@ -149,7 +190,7 @@ function App(): JSX.Element {
           path="/maingame"
           element={
             <ProtectedRoute user={user}>
-              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile} onLand={onLand} setOnLand={setOnLand} newPokemon={newPokemon} handleGeneratePokemon={handleGeneratePokemon}/>
+              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile} onLand={onLand} setOnLand={setOnLand} newPokemon={newPokemon} handleGeneratePokemon={handleGeneratePokemon} handleGenerateStarters={handleGenerateStarters} starterPokemon={starterPokemon} handleAddToParty={handleAddToParty}/>
             </ProtectedRoute>
           }
         />

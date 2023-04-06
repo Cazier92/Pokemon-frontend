@@ -55,4 +55,18 @@ async function updateProfile(
   }
 }
 
-export { getAllProfiles, addPhoto, updateProfile }
+async function associatePack(): Promise<Profile> {
+  try {
+    const res = await fetch(`${BASE_URL}/pack`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${tokenService.getToken()}`
+      }
+    })
+    return await res.json() as Profile
+  } catch (error) {
+    throw error
+  }
+}
+
+export { getAllProfiles, addPhoto, updateProfile, associatePack }

@@ -2,6 +2,7 @@
 
 //^ Pokemon models:
 export interface Pokemon {
+  _id: string;
   name: string;
   nickname?: string;
   owner?: { id: number };
@@ -151,6 +152,35 @@ export interface NewMapBoundary {
   boundaries: number[];
 }
 
+//^ Pack Models:
+
+export interface Pack {
+  owner: Profile['_id'];
+  medicinePocket: Medicine[];
+  machinePocket: Machine[];
+  ballPocket: Ball[];
+}
+
+export interface Medicine {
+  name: string;
+  affects: string;
+  value: number | null;
+  description: string;
+}
+
+export interface Machine {
+  name: string;
+  move: string;
+  value: 'HM' | 'TM';
+  description: string;
+}
+
+export interface Ball {
+  name: string;
+  bonus: string;
+  description: string;
+}
+
 
 /* ---------===== auth models =====--------- */
 
@@ -163,6 +193,7 @@ export interface Profile {
   pokemonPC: Pokemon[];
   currentMap: string;
   coordinates: Offset;
+  pack: Pack;
   createdAt: string;
   updatedAt: string;
 }

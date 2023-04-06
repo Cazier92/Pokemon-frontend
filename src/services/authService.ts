@@ -32,7 +32,7 @@ async function signup(
       if (photoFormData.photo && user) {
         const photoData = new FormData()
         photoData.append('photo', photoFormData.photo)
-        await addProfilePhoto(photoData, user.profile.id)
+        await addProfilePhoto(photoData, user.profile)
       }
     }
   } catch (error) {
