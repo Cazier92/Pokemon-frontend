@@ -22,3 +22,87 @@
   align-items: center;
   justify-content: center;
 }
+
+.health-box {
+  position: relative;
+  z-index: 1;
+  background-color: white;
+  width: 35%;
+  height: 12%;
+  border: 5px solid black;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+}
+
+#opponent-health {
+  top: 20%;
+  left: 6%;
+  box-shadow: rgba(0, 0, 0, .8) 15px 15px 8px 5px;
+}
+
+.pokemon-info {
+  display: flex;
+  /* gap: 5%; */
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  height: 40%;
+}
+
+.pokemon-name {
+  width: 50%;
+  text-align: center;
+  font-size: 20px;
+  margin: 0;
+}
+.pokemon-level {
+  width: 50%;
+  text-align: center;
+  margin: 0;
+}
+
+.health-bar {
+  width: 100%;
+  height: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: -40%;
+  top: 30%;
+}
+
+.health-sub {
+  display: flex;
+  margin: 0;
+  align-items: center;
+
+}
+
+.health-empty {
+  background-color: rgba(0, 0, 0, .3);
+  width: 75%;
+  height: 15px;
+  position: absolute;
+  border-radius: 10px;
+}
+
+.health-percent {
+  background-color: lime;
+  width: 75%;
+  height: 15px;
+  position: absolute;
+  border-radius: 10px;
+}
+
+.hp {
+  padding-right: 20px;
+  margin: 0;
+  font-size: 20px;
+  font-weight: 500;
+}

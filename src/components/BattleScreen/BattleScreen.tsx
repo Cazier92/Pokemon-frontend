@@ -164,6 +164,23 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       <div className='battle-screen'>
         <h1>This is a battle Screen</h1>
         <button onClick={battleUnInit}>finish battle</button>
+        {newPokemon ? 
+        (<>
+        <div className='health-box' id='opponent-health'>
+          <div className='pokemon-info'>
+            <p className='pokemon-name'>{(newPokemon.name.charAt(0).toUpperCase() + newPokemon.name.slice(1))}</p>
+            <p className='pokemon-level'>Level: {newPokemon.level}</p>
+          </div>
+          <div className='health-bar'>
+            <p className='hp'>HP:</p>
+            <div className='health-sub'>
+              <div className='health-empty' id='opponent-health-empty'></div>
+              <div className='health-percent' id='opponent-health-percent'></div>
+
+            </div>
+          </div>
+        </div>
+        </>) : (<></>)}
         <div className='canvas-div'>
           <canvas id='battle-canvas'></canvas>
         </div>
