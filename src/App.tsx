@@ -47,6 +47,7 @@ function App(): JSX.Element {
   const [newPokemon, setNewPokemon] = useState<Pokemon>()
   const [starterPokemon, setStarterPokemon] = useState<Pokemon[]>()
   const [profileUpdate, setProfileUpdate] = useState<boolean>(false)
+  const [partyPokemon, setPartyPokemon] = useState<Pokemon>()
 
   useEffect((): void => {
     const fetchAllPokemon = async (): Promise<void> => {
@@ -108,6 +109,16 @@ function App(): JSX.Element {
     }
     fetchMap()
   }, [userProfile, updateMap])
+
+  useEffect((): void => {
+    if (userProfile && userProfile.party && userProfile.party.length) {
+      const findPartyPokemon = async (): Promise<void> => {
+        const partyPokemon = await pokemonService.findPokemon(userProfile.party[0])
+        setPartyPokemon(partyPokemon)
+      }
+      findPartyPokemon()
+    }
+  }, [userProfile])
 
 
   const handleLogout = (): void => {
@@ -190,7 +201,7 @@ function App(): JSX.Element {
           path="/maingame"
           element={
             <ProtectedRoute user={user}>
-              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile} onLand={onLand} setOnLand={setOnLand} newPokemon={newPokemon} handleGeneratePokemon={handleGeneratePokemon} handleGenerateStarters={handleGenerateStarters} starterPokemon={starterPokemon} handleAddToParty={handleAddToParty}/>
+              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile} onLand={onLand} setOnLand={setOnLand} newPokemon={newPokemon} handleGeneratePokemon={handleGeneratePokemon} handleGenerateStarters={handleGenerateStarters} starterPokemon={starterPokemon} handleAddToParty={handleAddToParty} partyPokemon={partyPokemon}/>
             </ProtectedRoute>
           }
         />

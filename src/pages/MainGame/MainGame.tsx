@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 
 // services
 import * as profileService from '../../services/profileService'
+import * as pokemonService from '../../services/pokemonService'
 
 // types
 import { Profile } from '../../types/models'
@@ -34,18 +35,16 @@ interface MainGameProps {
   starterPokemon: Pokemon[] | undefined;
   handleGenerateStarters: (nums: number[]) => Promise<void>;
   handleAddToParty: (userId: Profile['_id'],pokemonId: Pokemon['_id']) => Promise<void>;
+  partyPokemon: Pokemon | undefined;
 }
 
 import './MainGame.css'
 const MainGame = (props: MainGameProps): JSX.Element => {
-  const {allPokemon, userProfile, currentMap, handleUpdateProfile, onLand, setOnLand, newPokemon, handleGeneratePokemon, starterPokemon, handleGenerateStarters, handleAddToParty} = props
+  const {allPokemon, userProfile, currentMap, handleUpdateProfile, onLand, setOnLand, newPokemon, handleGeneratePokemon, starterPokemon, handleGenerateStarters, handleAddToParty, partyPokemon} = props
 
   //^ State:
 
   const [battleActive, setBattleActive] = useState<boolean>(false)
-  const [x, setX] = useState<number>(0)
-  const [y, setY] = useState<number>(0)
-  // const [profileForm, setProfileForm]
 
   let newX = 0
   let newY = 0
@@ -92,11 +91,6 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   window.addEventListener('keyup', handleKeyUp)
 
 
-  const offset = {
-    x: -1790 + x,
-    y: -100 + y,
-  }
-
   let randomNum = (Math.random())
 
 
@@ -121,10 +115,19 @@ const MainGame = (props: MainGameProps): JSX.Element => {
     }
   }
 
-  
+  // if (userProfile && userProfile.party && userProfile.party.length) {
+  //   useEffect((): void => {
+  //     const findPartyPokemon = async (): Promise<void> => {
+  //       const partyPokemon = await pokemonService.findPokemon(userProfile.party[0])
+  //       setPartyPokemon(partyPokemon)
+  //     }
+  //   }, [])
+  // }
 
   if (currentMap && userProfile) {
-    if (userProfile.party && userProfile.party.length) {
+    if (partyPokemon) {
+      
+
       const image = new Image()
       image.src = currentMap.backgroundUrl
     
@@ -507,9 +510,9 @@ const MainGame = (props: MainGameProps): JSX.Element => {
                 isPokemon: true
               }
             }
-            if (newPokemon) {
+            if (partyPokemon) {
               const playerImg = new Image()
-              playerImg.src = `${newPokemon.spriteBack}`
+              playerImg.src = `${partyPokemon.spriteBack}`
               playerImg.className = 'opponent'
         
               playerPok = {
@@ -563,9 +566,8 @@ const MainGame = (props: MainGameProps): JSX.Element => {
                 <canvas id='canvas'></canvas>
                 <button onClick={() => battleUnInit()}>Test</button>
                 {battleActive ? (
-                <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} />
+                <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} userProfile={userProfile} partyPokemon={partyPokemon}/>
                 ) : (<></>) }
-                
               </>
             )
       

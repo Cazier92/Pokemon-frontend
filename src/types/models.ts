@@ -189,7 +189,7 @@ export interface Profile {
   photo?: string;
   _id: string;
   wallet: number;
-  party: Pokemon[];
+  party: Pokemon['_id'][];
   pokemonPC: Pokemon[];
   currentMap: string;
   coordinates: Offset;
