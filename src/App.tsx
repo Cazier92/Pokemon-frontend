@@ -114,7 +114,7 @@ function App(): JSX.Element {
 
   useEffect((): void => {
     if (pack) {
-      if (pack.newPack) {
+      if (pack.newPack === true) {
         if (pack.ballPocket.length < 5) {
           console.log('LESS THAN 5 BALLS')
           const createBall = async (): Promise<void> => {
@@ -127,18 +127,14 @@ function App(): JSX.Element {
           console.log('5+ BALLS')
           const changeStatus = async (): Promise<void> => {
             const updatedPack = await packService.changePackStatus()
-            // setPack(updatedPack)
+            setPack(updatedPack)
             console.log('Pack Status Changed.')
           }
           changeStatus()
 
         }
       } else {
-        // const changeStatus = async (): Promise<void> => {
-        //   const updatedPack = await packService.changePackStatus()
-        //   setPack(updatedPack)
-        // }
-        // changeStatus()
+        console.log('NO CHANGES TO PACK')
       }
     }
   }, [pack])
@@ -255,7 +251,7 @@ function App(): JSX.Element {
           path="/maingame"
           element={
             <ProtectedRoute user={user}>
-              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile} onLand={onLand} setOnLand={setOnLand} newPokemon={newPokemon} handleGeneratePokemon={handleGeneratePokemon} handleGenerateStarters={handleGenerateStarters} starterPokemon={starterPokemon} handleAddToParty={handleAddToParty} partyPokemon={partyPokemon}/>
+              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile} onLand={onLand} setOnLand={setOnLand} newPokemon={newPokemon} handleGeneratePokemon={handleGeneratePokemon} handleGenerateStarters={handleGenerateStarters} starterPokemon={starterPokemon} handleAddToParty={handleAddToParty} partyPokemon={partyPokemon} setPartyPokemon={setPartyPokemon}/>
             </ProtectedRoute>
           }
         />

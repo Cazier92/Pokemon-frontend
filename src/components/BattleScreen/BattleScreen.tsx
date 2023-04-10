@@ -1,10 +1,13 @@
 // npm modules
+import { useState } from 'react';
 
 // types
 import { User } from '../../types/models'
 import { Sprite } from '../../types/models';
 import { Pokemon } from '../../types/models';
 import { Profile } from '../../types/models';
+
+import * as pokemonService from '../../services/pokemonService'
 
 
 interface BattleScreenProps {
@@ -13,12 +16,23 @@ interface BattleScreenProps {
   userProfile: Profile;
   partyPokemon: Pokemon | undefined;
   capPokemon: (pokemon: Pokemon) => string | undefined;
+  setPartyPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>;
 }
 
 import './BattleScreen.css'
 
 const BattleScreen = (props: BattleScreenProps): JSX.Element => {
-  const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon} = props
+  const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon, setPartyPokemon} = props
+
+  // State: 
+  const [showMoves, setShowMoves] = useState<boolean>(true)
+  const [showPack, setShowPack] = useState<boolean>(false)
+  const [showParty, setShowParty] = useState<boolean>(false)
+
+  const handleChangePokemon = async (id: Pokemon['_id']): Promise<void> => {
+    const foundPokemon = await pokemonService.findPokemon(id)
+    setPartyPokemon(foundPokemon)
+  }
 
   const canvas = document.querySelector<HTMLCanvasElement>('#battle-canvas')
   const context = canvas?.getContext('2d')
@@ -49,6 +63,12 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     const opponentImg = new Image()
     opponentImg.src = `${newPokemon.spriteFront}`
     opponentImg.className = 'opponent'
+
+    const partyPokemonExp = partyPokemon.percentToNextLevel
+
+    const expPercentStyle = {
+      width: `${partyPokemonExp}%`
+    }
   
     const opponentPok: Sprite = {
       position: {
@@ -193,8 +213,21 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               <p className='exp'>Exp:</p>
               <div className='exp-sub'>
                 <div className='exp-empty'></div>
-                <div className='exp-percent'></div>
+                <div className='exp-percent' id='exp-percent' style={expPercentStyle}></div>
               </div>
+            </div>
+          </div>
+          <div className='battle-menu'>
+            <div className='move-selection'>
+              {
+                partyPokemon.moveSet.map((move) => 
+                  <div className='move'>
+                    <p className='move-name'>{move.name}</p>
+                    <p className='move-pp'>{move.currentPP}/{move.totalPP}</p>
+                    <p className='move-type'>{move.type}</p>
+                  </div>
+                )
+              }
             </div>
           </div>
           </>) : (<></>)}

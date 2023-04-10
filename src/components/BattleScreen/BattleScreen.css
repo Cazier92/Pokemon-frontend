@@ -23,6 +23,51 @@
   justify-content: center;
 }
 
+.battle-menu {
+  background-color: whitesmoke;
+  position: absolute;
+  z-index: 3;
+  top: 102%;
+  left: 7%;
+  width: 85%;
+  height: 16%;
+  border: 5px solid black;
+  border-radius: 10px;
+  display: flex;
+}
+
+.move-selection {
+  display: flex;
+  flex-wrap: wrap;
+  width: 40%;
+  margin: 1vmin;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.move {
+  width: 50%;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.move:hover {
+  background-color: rgba(155, 155, 55, .3);
+}
+
+.move-name {
+  margin: 0;
+}
+
+.move-pp {
+  margin: 0;
+}
+
+.move-type {
+  margin: 0;
+}
+
 .health-box {
   position: relative;
   z-index: 2;
