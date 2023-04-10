@@ -24,7 +24,7 @@ export interface Pokemon {
   spDefense: number;
   speed: number;
   effortPointTotal: number;
-  statusCondition?: string | null;
+  statusCondition?: 'paralyze' | 'sleep' | 'freeze' | 'confuse' | 'burn' | 'poison';
   captureRate: number;
   growthRate: string;
   levelBaseExp: number;
@@ -156,16 +156,20 @@ export interface NewMapBoundary {
 
 export interface Pack {
   owner: Profile['_id'];
+  newPack: boolean;
   medicinePocket: Medicine[];
   machinePocket: Machine[];
   ballPocket: Ball[];
+  keyItemPocket: KeyItem[];
 }
 
 export interface Medicine {
   name: string;
   affects: string;
-  value: number | null;
+  value: number;
+  condition?: 'paralyze' | 'sleep' | 'freeze' | 'confuse' | 'burn' | 'poison' | 'all';
   description: string;
+  cost: number;
 }
 
 export interface Machine {
@@ -173,11 +177,18 @@ export interface Machine {
   move: string;
   value: 'HM' | 'TM';
   description: string;
+  cost: number;
 }
 
 export interface Ball {
   name: string;
-  bonus: string;
+  bonus: number;
+  description: string;
+  cost: number;
+}
+
+export interface KeyItem {
+  name: string;
   description: string;
 }
 

@@ -20,6 +20,7 @@ import * as pokemonService from './services/pokemonService'
 import * as profileService from './services/profileService'
 import * as mapService from './services/mapService'
 import * as apiService from './services/apiService'
+import * as packService from './services/packService'
 
 // stylesheets
 import './App.css'
@@ -29,6 +30,10 @@ import { User } from './types/models'
 import { Pokemon } from './types/models'
 import { Profile } from './types/models'
 import { Map } from './types/models'
+import { Pack } from './types/models'
+
+// data 
+import { pokeball } from './data/ballData'
 
 // forms
 import { ProfileData } from './types/forms'
@@ -48,6 +53,7 @@ function App(): JSX.Element {
   const [starterPokemon, setStarterPokemon] = useState<Pokemon[]>()
   const [profileUpdate, setProfileUpdate] = useState<boolean>(false)
   const [partyPokemon, setPartyPokemon] = useState<Pokemon>()
+  const [pack, setPack] = useState<Pack>()
 
   useEffect((): void => {
     const fetchAllPokemon = async (): Promise<void> => {
@@ -89,6 +95,55 @@ function App(): JSX.Element {
       }
     }
   }, [userProfile])
+
+  useEffect((): void => {
+    if (userProfile) {
+      if (userProfile.pack) {
+        const userPack = async (): Promise<void> => {
+          try {
+            const pack: Pack = await packService.getUserPack()
+            setPack(pack)
+          } catch (error) {
+            console.log(error)
+          }
+        }
+        userPack()
+      }
+    }
+  }, [userProfile])
+
+  useEffect((): void => {
+    if (pack) {
+      if (pack.newPack) {
+        if (pack.ballPocket.length < 5) {
+          console.log('LESS THAN 5 BALLS')
+          const createBall = async (): Promise<void> => {
+            const updatedPack = await packService.createBall(pokeball)
+            setPack(updatedPack)
+            console.log('BALL CREATED')
+          }
+          createBall()
+        } else {
+          console.log('5+ BALLS')
+          const changeStatus = async (): Promise<void> => {
+            const updatedPack = await packService.changePackStatus()
+            // setPack(updatedPack)
+            console.log('Pack Status Changed.')
+          }
+          changeStatus()
+
+        }
+      } else {
+        // const changeStatus = async (): Promise<void> => {
+        //   const updatedPack = await packService.changePackStatus()
+        //   setPack(updatedPack)
+        // }
+        // changeStatus()
+      }
+    }
+  }, [pack])
+
+  console.log(pack)
 
   useEffect(():void => {
     if (userProfile?.coordinates.land) {
@@ -134,7 +189,6 @@ function App(): JSX.Element {
   const handleUpdateProfile = async (profileData: ProfileData, _id: Profile['_id']): Promise<void> => {
     try {
       const updatedProfile = await profileService.updateProfile(profileData, _id)
-      // setUserProfile(updatedProfile)
       console.log(updatedProfile)
       setUpdateMap(!updateMap)
     } catch (error) {
