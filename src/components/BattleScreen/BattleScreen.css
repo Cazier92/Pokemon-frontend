@@ -294,3 +294,49 @@
   display: inline;
 }
 
+.pack-menu {
+  position: absolute;
+  z-index: 5;
+  background-color: white;
+  height: 58.8%;
+  width: 45%;
+  left: 49%;
+  top: 59%;
+  border: 5px solid black;
+  border-radius: 10px;
+  overflow: scroll;
+}
+
+.pocket-selection {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10vmin;
+  height: 5vmin;
+  background-color: rgba(155, 155, 55, .3);
+  border-bottom: 2px solid black;
+}
+
+.pocket-selection>button {
+  cursor: pointer;
+}
+
+.item {
+  cursor: pointer;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.item:hover {
+  background-color: rgba(155, 155, 55, .3);
+}
+
+.item-description {
+  display: none;
+}
+
+.item:hover>.item-description {
+  display: inline;
+}

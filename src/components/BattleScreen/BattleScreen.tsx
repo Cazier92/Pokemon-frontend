@@ -6,8 +6,11 @@ import { User } from '../../types/models'
 import { Sprite } from '../../types/models';
 import { Pokemon } from '../../types/models';
 import { Profile } from '../../types/models';
+import { Pack } from '../../types/models';
+import { Ball } from '../../types/models';
 
 import * as pokemonService from '../../services/pokemonService'
+import * as packService from '../../services/packService'
 
 
 interface BattleScreenProps {
@@ -29,6 +32,10 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [showPack, setShowPack] = useState<boolean>(false)
   const [showParty, setShowParty] = useState<boolean>(false)
   const [fullParty, setFullParty] = useState<Pokemon[]>([])
+  const [pack, setPack] = useState<Pack>()
+  const [showMedicine, setShowMedicine] = useState<boolean>(false)
+  const [showBalls, setShowBalls] = useState<boolean>(false)
+  const [ballPocket, setBallPocket] = useState<Ball[]>()
 
 useEffect((): void => {
   const findParty = async (): Promise<void> => {
@@ -37,6 +44,27 @@ useEffect((): void => {
   }
   findParty()
 }, [])
+
+useEffect((): void => {
+  const findPack = async (): Promise<void> => {
+    const pack = await packService.getUserPack()
+    setPack(pack)
+  }
+  findPack()
+}, [])
+
+// useEffect((): void => {
+//   if (pack) {
+//     const countedBalls = pack.ballPocket.reduce((next, ball) => {
+//       const { name } = ball
+//       console.log({
+//         ...next, [name]: ball
+//       })
+//     }, {})
+//   }
+// }, [pack])
+
+
 
 
   const handleShowMoves = (): void => {
@@ -61,6 +89,16 @@ useEffect((): void => {
     setShowMoves(false)
     setShowPack(false)
     setShowParty(false)
+  }
+
+  const handleShowBalls = (): void => {
+    setShowBalls(true)
+    setShowMedicine(false)
+  }
+
+  const handleShowMedicine = (): void => {
+    setShowBalls(false)
+    setShowMedicine(true)
   }
 
   const canvas = document.querySelector<HTMLCanvasElement>('#battle-canvas')
@@ -299,6 +337,35 @@ useEffect((): void => {
                 </div>
                 )
               }
+              <div className='party-close'>
+                <button onClick={() => handleShowNone()}>Close</button>
+              </div>
+            </div>
+          ) : (<></>)}
+          {showPack ? (
+            <div className='pack-menu'>
+              <div className='pocket-selection'>
+                <button onClick={() => handleShowMedicine()}>Medicine</button>
+                <button onClick={() => handleShowBalls()}>Balls</button>
+              </div>
+              {showBalls && pack ? 
+              (<>
+                {pack.ballPocket.map((ball) => 
+                <div className='item'>
+                  <p>{ball.name}</p>
+                  <p className='item-description'>{ball.description}</p>
+                </div>
+                )}
+              </>) : (<></>)}
+              {showMedicine && pack ? 
+              (<>
+                {pack.medicinePocket.map((medicine) => 
+                <div className='item'>
+                  <p>{medicine.name}</p>
+                  <p className='item-description'>{medicine.description}</p>
+                </div>
+                )}
+              </>) : (<></>)}
               <div className='party-close'>
                 <button onClick={() => handleShowNone()}>Close</button>
               </div>
