@@ -282,3 +282,15 @@
 .party-close>button {
   cursor: pointer;
 }
+
+.pokemon>div {
+  display: none;
+  width: 50%;
+}
+
+
+
+.pokemon:hover>div {
+  display: inline;
+}
+

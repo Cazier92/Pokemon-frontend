@@ -63,11 +63,6 @@ useEffect((): void => {
     setShowParty(false)
   }
 
-  const handleChangePokemon = async (id: Pokemon['_id']): Promise<void> => {
-    const foundPokemon = await pokemonService.findPokemon(id)
-    setPartyPokemon(foundPokemon)
-  }
-
   const canvas = document.querySelector<HTMLCanvasElement>('#battle-canvas')
   const context = canvas?.getContext('2d')
   
@@ -94,6 +89,14 @@ useEffect((): void => {
 
 
   if (newPokemon && partyPokemon) {
+
+    const handleChangePokemon = async (pokemon: Pokemon): Promise<void> => {
+      if (pokemon._id !== partyPokemon._id) {
+        setPartyPokemon(pokemon)
+        handleShowNone()
+      }
+    }
+
     const opponentImg = new Image()
     opponentImg.src = `${newPokemon.spriteFront}`
     opponentImg.className = 'opponent'
@@ -283,9 +286,16 @@ useEffect((): void => {
             <div className='party-menu'>
               {
                 fullParty.map((pokemon) => 
-                <div  className='pokemon'>
+                <div className='pokemon' onClick={() => handleChangePokemon(pokemon)}>
                   <p>{capPokemon(pokemon)}</p>
                   <img src={pokemon.spriteFront} alt="" />
+                  <p>Lv: {pokemon.level}</p>
+                  {pokemon._id === partyPokemon._id ? (<></>) : 
+                  (<>
+                    <div>
+                      <p>Choose this pokemon!</p>
+                    </div>
+                  </>)}
                 </div>
                 )
               }
