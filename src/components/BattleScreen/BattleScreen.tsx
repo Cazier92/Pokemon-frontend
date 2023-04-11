@@ -289,8 +289,8 @@ useEffect((): void => {
                 </div>
                 )
               }
-              <div>
-                
+              <div className='party-close'>
+                <button onClick={() => handleShowNone()}>Close</button>
               </div>
             </div>
           ) : (<></>)}

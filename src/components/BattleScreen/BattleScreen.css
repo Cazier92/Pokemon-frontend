@@ -272,3 +272,13 @@
 .pokemon:hover {
   background-color: rgba(155, 155, 55, .3);
 }
+
+.party-close {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+}
+
+.party-close>button {
+  cursor: pointer;
+}
