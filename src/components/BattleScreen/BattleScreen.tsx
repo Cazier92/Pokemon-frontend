@@ -1,5 +1,5 @@
 // npm modules
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 // types
 import { User } from '../../types/models'
@@ -25,9 +25,43 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon, setPartyPokemon} = props
 
   // State: 
-  const [showMoves, setShowMoves] = useState<boolean>(true)
+  const [showMoves, setShowMoves] = useState<boolean>(false)
   const [showPack, setShowPack] = useState<boolean>(false)
   const [showParty, setShowParty] = useState<boolean>(false)
+  const [fullParty, setFullParty] = useState<Pokemon[]>([])
+
+useEffect((): void => {
+  const findParty = async (): Promise<void> => {
+    const party = await pokemonService.showParty()
+    setFullParty(party)
+  }
+  findParty()
+}, [])
+
+
+  const handleShowMoves = (): void => {
+    setShowMoves(true)
+    setShowPack(false)
+    setShowParty(false)
+  }
+
+  const handleShowPack = (): void => {
+    setShowMoves(false)
+    setShowPack(true)
+    setShowParty(false)
+  }
+
+  const handleShowParty = (): void => {
+    setShowMoves(false)
+    setShowPack(false)
+    setShowParty(true)
+  }
+
+  const handleShowNone = (): void => {
+    setShowMoves(false)
+    setShowPack(false)
+    setShowParty(false)
+  }
 
   const handleChangePokemon = async (id: Pokemon['_id']): Promise<void> => {
     const foundPokemon = await pokemonService.findPokemon(id)
@@ -219,7 +253,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           </div>
           <div className='battle-menu'>
             <div className='move-selection'>
-              {
+              { showMoves ? (
                 partyPokemon.moveSet.map((move) => 
                   <div className='move'>
                     <p className='move-name'>{move.name}</p>
@@ -227,9 +261,39 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
                     <p className='move-type'>{move.type}</p>
                   </div>
                 )
+              ) : (<></>)
               }
             </div>
+            <div className='option-selection'>
+              <div className='option-div' onClick={() => handleShowMoves()}>
+                <p className='option-text'>Fight</p>
+              </div>
+              <div className='option-div' onClick={() => handleShowPack()}>
+                <p className='option-text'>Pack</p>
+              </div>
+              <div className='option-div' onClick={() => handleShowParty()}>
+                <p className='option-text'>Pokémon</p>
+              </div>
+              <div className='option-div' onClick={battleUnInit}>
+                <p className='option-text'>Run</p>
+              </div>
+            </div>
           </div>
+          {showParty ? (
+            <div className='party-menu'>
+              {
+                fullParty.map((pokemon) => 
+                <div  className='pokemon'>
+                  <p>{capPokemon(pokemon)}</p>
+                  <img src={pokemon.spriteFront} alt="" />
+                </div>
+                )
+              }
+              <div>
+                
+              </div>
+            </div>
+          ) : (<></>)}
           </>) : (<></>)}
           <div className='canvas-div'>
             <canvas id='battle-canvas'></canvas>

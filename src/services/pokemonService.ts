@@ -29,6 +29,17 @@ async function findPokemon(id: Pokemon['_id']): Promise<Pokemon> {
   }
 }
 
+async function showParty(): Promise<Pokemon[]> {
+  try {
+    const res = await fetch(`${BASE_URL}/partyPokemon`, {
+      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+    })
+    return await res.json() as Pokemon[]
+  } catch (error) {
+    throw error
+  }
+}
+
 async function addPokemonToParty(userId: Profile['_id'], pokemonId: Pokemon['_id']): Promise<Profile> {
   try {
     const res = await fetch(`${BASE_URL}/party/${userId}/${pokemonId}`, {
@@ -57,6 +68,7 @@ async function addPokemonToPC(userId: Profile['_id'], pokemonId: Pokemon['_id'])
 
 export {
   getAllPokemon,
+  showParty,
   addPokemonToParty,
   addPokemonToPC,
   findPokemon,

@@ -53,6 +53,7 @@ function App(): JSX.Element {
   const [starterPokemon, setStarterPokemon] = useState<Pokemon[]>()
   const [profileUpdate, setProfileUpdate] = useState<boolean>(false)
   const [partyPokemon, setPartyPokemon] = useState<Pokemon>()
+  // const [fullParty, setFullParty] = useState<Pokemon[]>()
   const [pack, setPack] = useState<Pack>()
 
   useEffect((): void => {
@@ -171,6 +172,26 @@ function App(): JSX.Element {
     }
   }, [userProfile])
 
+  console.log(userProfile)
+
+  // useEffect((): void => {
+  //   if (userProfile && userProfile.party && userProfile.party.length) {
+  //     for (let i = 0; i < userProfile.party.length; i++) {
+  //       const findPartyPokemon = async (): Promise<void> => {
+  //         const partyPokemon = await pokemonService.findPokemon(userProfile.party[i])
+  //         if (fullParty && !fullParty.includes(partyPokemon)) {
+  //           const party: Pokemon[] = fullParty
+  //           setFullParty([...party, partyPokemon])
+  //         } else {
+  //           setFullParty([partyPokemon])
+  //         }
+  //       }
+  //       findPartyPokemon()
+  //     }
+  //   }
+  // }, [])
+
+  // console.log(fullParty, 'full Party')
 
   const handleLogout = (): void => {
     authService.logout()
