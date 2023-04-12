@@ -47,6 +47,7 @@ export interface PotentialMove {
 }
 
 export interface Move {
+  _id: string;
   name: string;
   type: string;
   accuracy: number | null;

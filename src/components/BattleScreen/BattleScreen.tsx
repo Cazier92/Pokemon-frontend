@@ -12,6 +12,7 @@ import { Move } from '../../types/models';
 
 import * as pokemonService from '../../services/pokemonService'
 import * as packService from '../../services/packService'
+import * as battleService from '../../services/battleService'
 
 
 interface BattleScreenProps {
@@ -91,9 +92,18 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   }
 
   const handleChooseMove = (move: Move, userPok: Pokemon, opponent: Pokemon ): void => {
-    const randomNum = (Math.floor(Math.random() * opponent.moveSet.length))
-    const opponentMove = opponent.moveSet[randomNum]
-    const moves: Move[] = [move, opponentMove]
+    let opponentMove: Move
+    const moves: Move[] = [move]
+    const findMove = (): void => {
+      const randomNum = (Math.floor(Math.random() * opponent.moveSet.length))
+      if (opponent.moveSet[randomNum].currentPP > 0) {
+        opponentMove = opponent.moveSet[randomNum]
+        moves.push(opponentMove)
+      } else {
+        findMove()
+      }
+    }
+    findMove()
   }
 
   const canvas = document.querySelector<HTMLCanvasElement>('#battle-canvas')
