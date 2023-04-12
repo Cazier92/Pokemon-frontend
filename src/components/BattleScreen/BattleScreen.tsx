@@ -8,6 +8,7 @@ import { Pokemon } from '../../types/models';
 import { Profile } from '../../types/models';
 import { Pack } from '../../types/models';
 import { Ball } from '../../types/models';
+import { Move } from '../../types/models';
 
 import * as pokemonService from '../../services/pokemonService'
 import * as packService from '../../services/packService'
@@ -37,35 +38,23 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [showBalls, setShowBalls] = useState<boolean>(false)
   const [ballPocket, setBallPocket] = useState<Ball[]>()
 
-useEffect((): void => {
-  const findParty = async (): Promise<void> => {
-    const party = await pokemonService.showParty()
-    setFullParty(party)
-  }
-  findParty()
-}, [])
+  useEffect((): void => {
+    const findParty = async (): Promise<void> => {
+      const party = await pokemonService.showParty()
+      setFullParty(party)
+    }
+    findParty()
+  }, [])
 
-useEffect((): void => {
-  const findPack = async (): Promise<void> => {
-    const pack = await packService.getUserPack()
-    setPack(pack)
-  }
-  findPack()
-}, [])
+  useEffect((): void => {
+    const findPack = async (): Promise<void> => {
+      const pack = await packService.getUserPack()
+      setPack(pack)
+    }
+    findPack()
+  }, [])
 
-// useEffect((): void => {
-//   if (pack) {
-//     const countedBalls = pack.ballPocket.reduce((next, ball) => {
-//       const { name } = ball
-//       console.log({
-//         ...next, [name]: ball
-//       })
-//     }, {})
-//   }
-// }, [pack])
-
-
-
+  
 
   const handleShowMoves = (): void => {
     setShowMoves(true)
@@ -99,6 +88,12 @@ useEffect((): void => {
   const handleShowMedicine = (): void => {
     setShowBalls(false)
     setShowMedicine(true)
+  }
+
+  const handleChooseMove = (move: Move, userPok: Pokemon, opponent: Pokemon ): void => {
+    const randomNum = (Math.floor(Math.random() * opponent.moveSet.length))
+    const opponentMove = opponent.moveSet[randomNum]
+    const moves: Move[] = [move, opponentMove]
   }
 
   const canvas = document.querySelector<HTMLCanvasElement>('#battle-canvas')
