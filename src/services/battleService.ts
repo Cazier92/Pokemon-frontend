@@ -19,8 +19,20 @@ async function useMove(moveId: Move['_id'], userId: Pokemon['_id'], targetId: Po
   }
 }
 
+async function findMove(moveId: Move['_id']): Promise<Move> {
+  try {
+    const res = await fetch(`${BASE_URL}/move/${moveId}`, {
+      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+    })
+    return await res.json() as Move
+  } catch (error) {
+    throw error
+  }
+}
+
 
 
 export {
   useMove,
+  findMove,
 }

@@ -22,12 +22,13 @@ interface BattleScreenProps {
   partyPokemon: Pokemon | undefined;
   capPokemon: (pokemon: Pokemon) => string | undefined;
   setPartyPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>;
+  setNewPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>
 }
 
 import './BattleScreen.css'
 
 const BattleScreen = (props: BattleScreenProps): JSX.Element => {
-  const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon, setPartyPokemon} = props
+  const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon, setPartyPokemon, setNewPokemon} = props
 
   // State: 
   const [showMoves, setShowMoves] = useState<boolean>(false)
@@ -38,6 +39,10 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [showMedicine, setShowMedicine] = useState<boolean>(false)
   const [showBalls, setShowBalls] = useState<boolean>(false)
   const [ballPocket, setBallPocket] = useState<Ball[]>()
+  const [showBattleText, setShowBattleText] = useState<boolean>(false)
+  const [secondMove, setSecondMove] = useState<Move>()
+  const [opponentHealthPer, setOpponentHealthPer] = useState<number>(75)
+  const [playerHealthPer, setPlayerHealthPer] = useState<number>(75)
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -91,20 +96,8 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     setShowMedicine(true)
   }
 
-  const handleChooseMove = (move: Move, userPok: Pokemon, opponent: Pokemon ): void => {
-    let opponentMove: Move
-    const moves: Move[] = [move]
-    const findMove = (): void => {
-      const randomNum = (Math.floor(Math.random() * opponent.moveSet.length))
-      if (opponent.moveSet[randomNum].currentPP > 0) {
-        opponentMove = opponent.moveSet[randomNum]
-        moves.push(opponentMove)
-      } else {
-        findMove()
-      }
-    }
-    findMove()
-  }
+
+  
 
   const canvas = document.querySelector<HTMLCanvasElement>('#battle-canvas')
   const context = canvas?.getContext('2d')
@@ -130,8 +123,70 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   }
 
 
-
+  
   if (newPokemon && partyPokemon) {
+    
+    let battleText: string = ''
+
+    const opponentHealth = document.getElementById('opponent-health-percent')
+    const playerHealth = document.getElementById('player-health-percent')
+    if (opponentHealth && playerHealth) {
+      opponentHealth.style.width = `${opponentHealthPer}%`
+      playerHealth.style.width = `${playerHealthPer}%`
+    }
+
+    const handleChooseMove = async (move: Move, userPok: Pokemon, opponent: Pokemon ): Promise<void> => {
+      const foundOpponent = await pokemonService.findPokemon(opponent._id)
+      setNewPokemon(foundOpponent)
+      let opponentMoveSet: Move[] = []
+      foundOpponent.moveSet.forEach(move => {
+        if (move.currentPP > 0) {
+          opponentMoveSet.push(move)
+        }
+      })
+      const randomNum = Math.floor(Math.random() * opponentMoveSet.length)
+      console.log('RANDOMNUM:', randomNum)
+      console.log('OPPONENT MOVESET:', foundOpponent.moveSet)
+      const opponentMoveId = opponentMoveSet[randomNum]
+      const opponentMove = await battleService.findMove(opponentMoveId._id)
+      const moves: Move[] = [move, opponentMove]
+      if (moves[0].priority > moves[1].priority) {
+        battleText = `${userPok.name} used ${move.name}!`
+        setShowBattleText(true)
+        const updatedOpponent = await battleService.useMove(moves[0]._id, userPok._id, foundOpponent._id)
+        setNewPokemon(updatedOpponent)
+        setOpponentHealthPer((75 * (updatedOpponent.currentHP/ updatedOpponent.totalHP)))
+        const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
+        setPartyPokemon(updatedUser)
+      } else if (moves[1].priority > moves[0].priority) {
+        battleText = `${foundOpponent.name} used ${moves[1].name}!`
+        setShowBattleText(true)
+        const updatedUser = await battleService.useMove(moves[1]._id, foundOpponent._id, userPok._id)
+        setPartyPokemon(updatedUser)
+        setPlayerHealthPer((75 * (updatedUser.currentHP/ updatedUser.totalHP)))
+        const updatedOpponent = await pokemonService.findPokemon(newPokemon._id)
+        setNewPokemon(updatedOpponent)
+      } else {
+        if (userPok.speed > foundOpponent.speed) {
+          console.log('HERE')
+          battleText = `${userPok.name} used ${move.name}!`
+          setShowBattleText(true)
+          const updatedOpponent = await battleService.useMove(moves[0]._id, userPok._id, foundOpponent._id)
+          setNewPokemon(updatedOpponent)
+          setOpponentHealthPer((75 * (updatedOpponent.currentHP/ updatedOpponent.totalHP)))
+          const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
+          setPartyPokemon(updatedUser)
+        } else {
+          battleText = `${foundOpponent.name} used ${moves[1].name}!`
+          setShowBattleText(true)
+          const updatedUser = await battleService.useMove(moves[1]._id, foundOpponent._id, userPok._id)
+          setPartyPokemon(updatedUser)
+          setPlayerHealthPer((75 * (updatedUser.currentHP/ updatedUser.totalHP)))
+          const updatedOpponent = await pokemonService.findPokemon(newPokemon._id)
+          setNewPokemon(updatedOpponent)
+        }
+      }
+    }
 
     const handleChangePokemon = async (pokemon: Pokemon): Promise<void> => {
       if (pokemon._id !== partyPokemon._id) {
@@ -301,7 +356,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
             <div className='move-selection'>
               { showMoves ? (
                 partyPokemon.moveSet.map((move) => 
-                  <div className='move'>
+                  <div className='move' onClick={() => handleChooseMove(move, partyPokemon, newPokemon)}>
                     <p className='move-name'>{move.name}</p>
                     <p className='move-pp'>{move.currentPP}/{move.totalPP}</p>
                     <p className='move-type'>{move.type}</p>
@@ -376,6 +431,11 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               </div>
             </div>
           ) : (<></>)}
+          {showBattleText ? 
+          (<div className='battle-text-div'>
+            <p className='battle-text'>{battleText}</p>
+          </div>) 
+          : (<></>)}
           </>) : (<></>)}
           <div className='canvas-div'>
             <canvas id='battle-canvas'></canvas>
