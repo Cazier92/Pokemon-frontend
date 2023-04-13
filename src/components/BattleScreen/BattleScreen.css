@@ -340,3 +340,21 @@
 .item:hover>.item-description {
   display: inline;
 }
+
+.battle-text-div {
+  position: absolute;
+  z-index: 10;
+  top: 102%;
+  left: 6%;
+  background-color: white;
+  height: 16%;
+  border: 5px solid black;
+  border-radius: 5px;
+  width: 87%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 5vmin;
+  cursor: pointer;
+}

@@ -43,6 +43,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [secondMove, setSecondMove] = useState<Move>()
   const [opponentHealthPer, setOpponentHealthPer] = useState<number>(75)
   const [playerHealthPer, setPlayerHealthPer] = useState<number>(75)
+  const [battleText, setBattleText] = useState<string>('')
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -126,7 +127,6 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   
   if (newPokemon && partyPokemon) {
     
-    let battleText: string = ''
 
     const opponentHealth = document.getElementById('opponent-health-percent')
     const playerHealth = document.getElementById('player-health-percent')
@@ -151,7 +151,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       const opponentMove = await battleService.findMove(opponentMoveId._id)
       const moves: Move[] = [move, opponentMove]
       if (moves[0].priority > moves[1].priority) {
-        battleText = `${userPok.name} used ${move.name}!`
+        setBattleText(`${userPok.name} used ${move.name}!`)
         setShowBattleText(true)
         const updatedOpponent = await battleService.useMove(moves[0]._id, userPok._id, foundOpponent._id)
         setNewPokemon(updatedOpponent)
@@ -159,7 +159,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
         const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
         setPartyPokemon(updatedUser)
       } else if (moves[1].priority > moves[0].priority) {
-        battleText = `${foundOpponent.name} used ${moves[1].name}!`
+        setBattleText(`${foundOpponent.name} used ${moves[1].name}!`)
         setShowBattleText(true)
         const updatedUser = await battleService.useMove(moves[1]._id, foundOpponent._id, userPok._id)
         setPartyPokemon(updatedUser)
@@ -169,7 +169,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       } else {
         if (userPok.speed > foundOpponent.speed) {
           console.log('HERE')
-          battleText = `${userPok.name} used ${move.name}!`
+          setBattleText(`${userPok.name} used ${move.name}!`)
           setShowBattleText(true)
           const updatedOpponent = await battleService.useMove(moves[0]._id, userPok._id, foundOpponent._id)
           setNewPokemon(updatedOpponent)
@@ -177,7 +177,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
           setPartyPokemon(updatedUser)
         } else {
-          battleText = `${foundOpponent.name} used ${moves[1].name}!`
+          setBattleText(`${foundOpponent.name} used ${moves[1].name}!`)
           setShowBattleText(true)
           const updatedUser = await battleService.useMove(moves[1]._id, foundOpponent._id, userPok._id)
           setPartyPokemon(updatedUser)
@@ -432,7 +432,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
             </div>
           ) : (<></>)}
           {showBattleText ? 
-          (<div className='battle-text-div'>
+          (<div className='battle-text-div' onClick={() => setShowBattleText(false)}>
             <p className='battle-text'>{battleText}</p>
           </div>) 
           : (<></>)}
