@@ -25,12 +25,13 @@ interface BattleScreenProps {
   setPartyPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>;
   setNewPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>;
   setUserProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>;
+  user: User | null;
 }
 
 import './BattleScreen.css'
 
 const BattleScreen = (props: BattleScreenProps): JSX.Element => {
-  const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon, setPartyPokemon, setNewPokemon, setUserProfile} = props
+  const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon, setPartyPokemon, setNewPokemon, setUserProfile, user} = props
 
   // State: 
   const [showMoves, setShowMoves] = useState<boolean>(false)
@@ -233,16 +234,19 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
         console.log(updatedUser)
         const updatedOpponent = await pokemonService.findPokemon(newPokemon._id)
         setNewPokemon(updatedOpponent)
-        const updatedUserProfile = await profileService.getUser()
-        // setUserProfile(updatedUserProfile)
+        // const updatedUserProfile = await profileService.getUser()
+        const profilesData: Profile[] = await profileService.getAllProfiles()
+        setUserProfile(profilesData.find(profile => profile._id === user?.profile))
       } else {
         const updatedOpponent = await battleService.useMove(move._id, attacker._id, target._id)
         setNewPokemon(updatedOpponent)
         setOpponentHealthPer((75 * (updatedOpponent.currentHP/ updatedOpponent.totalHP)))
         const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
         setPartyPokemon(updatedUser)
-        const updatedUserProfile = await profileService.getUser()
+        // const updatedUserProfile = await profileService.getUser()
         // setUserProfile(updatedUserProfile)
+        const profilesData: Profile[] = await profileService.getAllProfiles()
+        setUserProfile(profilesData.find(profile => profile._id === user?.profile))
       }
     }
 

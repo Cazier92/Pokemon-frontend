@@ -14,6 +14,7 @@ import { Position } from '../../types/models'
 import { Boundary } from '../../types/models'
 import { Map } from '../../types/models'
 import { ProfileData } from '../../types/forms'
+import { User } from '../../types/models'
 
 // data imports
 
@@ -39,11 +40,12 @@ interface MainGameProps {
   setPartyPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>;
   setNewPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>;
   setUserProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>;
+  user: User | null;
 }
 
 import './MainGame.css'
 const MainGame = (props: MainGameProps): JSX.Element => {
-  const {allPokemon, userProfile, currentMap, handleUpdateProfile, onLand, setOnLand, newPokemon, handleGeneratePokemon, starterPokemon, handleGenerateStarters, handleAddToParty, partyPokemon, setPartyPokemon, setNewPokemon, setUserProfile} = props
+  const {allPokemon, userProfile, currentMap, handleUpdateProfile, onLand, setOnLand, newPokemon, handleGeneratePokemon, starterPokemon, handleGenerateStarters, handleAddToParty, partyPokemon, setPartyPokemon, setNewPokemon, setUserProfile, user} = props
 
   //^ State:
 
@@ -542,7 +544,7 @@ const MainGame = (props: MainGameProps): JSX.Element => {
                 <canvas id='canvas'></canvas>
                 <button onClick={() => battleUnInit()}>Test</button>
                 {battleActive ? (
-                <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} setNewPokemon={setNewPokemon} userProfile={userProfile} partyPokemon={partyPokemon} capPokemon={capPokemon} setPartyPokemon={setPartyPokemon} setUserProfile={setUserProfile}/>
+                <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} setNewPokemon={setNewPokemon} userProfile={userProfile} partyPokemon={partyPokemon} capPokemon={capPokemon} setPartyPokemon={setPartyPokemon} setUserProfile={setUserProfile} user={user}/>
                 ) : (<></>) }
               </>
             )
