@@ -171,7 +171,7 @@ function App(): JSX.Element {
     }
   }, [userProfile])
 
-  console.log(userProfile)
+  // console.log(userProfile)
 
 
 
@@ -254,7 +254,7 @@ function App(): JSX.Element {
           path="/maingame"
           element={
             <ProtectedRoute user={user}>
-              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile} onLand={onLand} setOnLand={setOnLand} newPokemon={newPokemon} handleGeneratePokemon={handleGeneratePokemon} handleGenerateStarters={handleGenerateStarters} starterPokemon={starterPokemon} handleAddToParty={handleAddToParty} partyPokemon={partyPokemon} setPartyPokemon={setPartyPokemon} setNewPokemon={setNewPokemon}/>
+              <MainGame allPokemon={allPokemon} userProfile={userProfile} currentMap={currentMap} handleUpdateProfile={handleUpdateProfile} onLand={onLand} setOnLand={setOnLand} newPokemon={newPokemon} handleGeneratePokemon={handleGeneratePokemon} handleGenerateStarters={handleGenerateStarters} starterPokemon={starterPokemon} handleAddToParty={handleAddToParty} partyPokemon={partyPokemon} setPartyPokemon={setPartyPokemon} setNewPokemon={setNewPokemon} setUserProfile={setUserProfile}/>
             </ProtectedRoute>
           }
         />

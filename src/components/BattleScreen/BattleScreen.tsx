@@ -13,6 +13,7 @@ import { Move } from '../../types/models';
 import * as pokemonService from '../../services/pokemonService'
 import * as packService from '../../services/packService'
 import * as battleService from '../../services/battleService'
+import * as profileService from '../../services/profileService'
 
 
 interface BattleScreenProps {
@@ -22,13 +23,14 @@ interface BattleScreenProps {
   partyPokemon: Pokemon | undefined;
   capPokemon: (pokemon: Pokemon) => string | undefined;
   setPartyPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>;
-  setNewPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>
+  setNewPokemon: React.Dispatch<React.SetStateAction<Pokemon | undefined>>;
+  setUserProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>;
 }
 
 import './BattleScreen.css'
 
 const BattleScreen = (props: BattleScreenProps): JSX.Element => {
-  const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon, setPartyPokemon, setNewPokemon} = props
+  const {battleUnInit, newPokemon, userProfile, partyPokemon, capPokemon, setPartyPokemon, setNewPokemon, setUserProfile} = props
 
   // State: 
   const [showMoves, setShowMoves] = useState<boolean>(false)
@@ -40,10 +42,14 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [showBalls, setShowBalls] = useState<boolean>(false)
   const [ballPocket, setBallPocket] = useState<Ball[]>()
   const [showBattleText, setShowBattleText] = useState<boolean>(false)
-  const [secondMove, setSecondMove] = useState<Move>()
+  const [opponentTurn, setOpponentTurn] = useState<boolean>(false)
   const [opponentHealthPer, setOpponentHealthPer] = useState<number>(75)
   const [playerHealthPer, setPlayerHealthPer] = useState<number>(75)
   const [battleText, setBattleText] = useState<string>('')
+  const [secondMove, setSecondMove] = useState<Move>()
+  const [attacker, setAttacker] = useState<Pokemon>()
+  const [target, setTarget] = useState<Pokemon>()
+  const [secondTurn, setSecondTurn] = useState<boolean>(false)
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -61,7 +67,12 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     findPack()
   }, [])
 
-  
+      useEffect((): void => {
+      if (newPokemon && partyPokemon) {
+        setOpponentHealthPer((75 * (newPokemon.currentHP/ newPokemon.totalHP)))
+        setPlayerHealthPer((75 * (partyPokemon.currentHP/ partyPokemon.totalHP)))
+      }
+    }, [newPokemon, partyPokemon])
 
   const handleShowMoves = (): void => {
     setShowMoves(true)
@@ -126,8 +137,15 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
 
   
   if (newPokemon && partyPokemon) {
-    
+    // const [secondMove, setSecondMove] = useState<Move>(newPokemon.moveSet[0])
+    // const [attacker, setAttacker] = useState<Pokemon>(partyPokemon)
+    // const [target, setTarget] = useState<Pokemon>(newPokemon)
+    // useEffect((): void => {
+    //   setOpponentHealthPer((75 * (newPokemon.currentHP/ newPokemon.totalHP)))
+    //   setPlayerHealthPer((75 * (partyPokemon.currentHP/ partyPokemon.totalHP)))
+    // }, [])
 
+    
     const opponentHealth = document.getElementById('opponent-health-percent')
     const playerHealth = document.getElementById('player-health-percent')
     if (opponentHealth && playerHealth) {
@@ -158,6 +176,10 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
         setOpponentHealthPer((75 * (updatedOpponent.currentHP/ updatedOpponent.totalHP)))
         const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
         setPartyPokemon(updatedUser)
+        setSecondMove(moves[1])
+        setOpponentTurn(true)
+        setTarget(updatedUser)
+        setAttacker(updatedOpponent)
       } else if (moves[1].priority > moves[0].priority) {
         setBattleText(`${foundOpponent.name} used ${moves[1].name}!`)
         setShowBattleText(true)
@@ -166,6 +188,10 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
         setPlayerHealthPer((75 * (updatedUser.currentHP/ updatedUser.totalHP)))
         const updatedOpponent = await pokemonService.findPokemon(newPokemon._id)
         setNewPokemon(updatedOpponent)
+        setSecondMove(moves[0])
+        setOpponentTurn(false)
+        setTarget(updatedOpponent)
+        setAttacker(updatedUser)
       } else {
         if (userPok.speed > foundOpponent.speed) {
           console.log('HERE')
@@ -176,6 +202,10 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           setOpponentHealthPer((75 * (updatedOpponent.currentHP/ updatedOpponent.totalHP)))
           const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
           setPartyPokemon(updatedUser)
+          setSecondMove(moves[1])
+          setOpponentTurn(true)
+          setTarget(updatedUser)
+          setAttacker(updatedOpponent)
         } else {
           setBattleText(`${foundOpponent.name} used ${moves[1].name}!`)
           setShowBattleText(true)
@@ -184,7 +214,35 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           setPlayerHealthPer((75 * (updatedUser.currentHP/ updatedUser.totalHP)))
           const updatedOpponent = await pokemonService.findPokemon(newPokemon._id)
           setNewPokemon(updatedOpponent)
+          setSecondMove(moves[0])
+          setOpponentTurn(false)
+          setTarget(updatedOpponent)
+          setAttacker(updatedUser)
         }
+      }
+    }
+
+    const handleNextMove = async (move: Move, attacker: Pokemon, target: Pokemon, opponentTurn: boolean): Promise<void> => {
+      setBattleText(`${attacker.name} used ${move.name}!`)
+      setShowBattleText(false)
+      setSecondTurn(true)
+      if (opponentTurn) {
+        const updatedUser = await battleService.useMove(move._id, attacker._id, target._id)
+        setPartyPokemon(updatedUser)
+        setPlayerHealthPer((75 * (updatedUser.currentHP/ updatedUser.totalHP)))
+        console.log(updatedUser)
+        const updatedOpponent = await pokemonService.findPokemon(newPokemon._id)
+        setNewPokemon(updatedOpponent)
+        const updatedUserProfile = await profileService.getUser()
+        // setUserProfile(updatedUserProfile)
+      } else {
+        const updatedOpponent = await battleService.useMove(move._id, attacker._id, target._id)
+        setNewPokemon(updatedOpponent)
+        setOpponentHealthPer((75 * (updatedOpponent.currentHP/ updatedOpponent.totalHP)))
+        const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
+        setPartyPokemon(updatedUser)
+        const updatedUserProfile = await profileService.getUser()
+        // setUserProfile(updatedUserProfile)
       }
     }
 
@@ -432,11 +490,17 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
             </div>
           ) : (<></>)}
           {showBattleText ? 
-          (<div className='battle-text-div' onClick={() => setShowBattleText(false)}>
+          (<div className='battle-text-div' onClick={() => handleNextMove(secondMove, attacker, target, opponentTurn)}>
+            <p className='battle-text'>{battleText}</p>
+          </div>) 
+          : (<></>)}
+          {secondTurn ? 
+          (<div className='battle-text-div' onClick={() => setSecondTurn(false)}>
             <p className='battle-text'>{battleText}</p>
           </div>) 
           : (<></>)}
           </>) : (<></>)}
+          
           <div className='canvas-div'>
             <canvas id='battle-canvas'></canvas>
           </div>

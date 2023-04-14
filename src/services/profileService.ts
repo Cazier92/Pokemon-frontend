@@ -18,6 +18,17 @@ async function getAllProfiles(): Promise<Profile[]> {
   }
 }
 
+async function getUser(): Promise<Profile> {
+  try {
+    const res = await fetch(`${BASE_URL}/user`, {
+      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+    })
+    return await res.json() as Profile
+  } catch (error) {
+    throw error
+  }
+}
+
 async function addPhoto(
   photoData: FormData, 
   _id: string
@@ -69,4 +80,4 @@ async function associatePack(): Promise<Profile> {
   }
 }
 
-export { getAllProfiles, addPhoto, updateProfile, associatePack }
+export { getAllProfiles, getUser, addPhoto, updateProfile, associatePack }
