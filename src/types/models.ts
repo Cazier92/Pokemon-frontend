@@ -156,6 +156,7 @@ export interface NewMapBoundary {
 //^ Pack Models:
 
 export interface Pack {
+  _id: string;
   owner: Profile['_id'];
   newPack: boolean;
   medicinePocket: Medicine[];
@@ -165,15 +166,20 @@ export interface Pack {
 }
 
 export interface Medicine {
+  _id: string;
   name: string;
-  affects: string;
+  affects: string[];
   value: number;
   condition?: 'paralyze' | 'sleep' | 'freeze' | 'confuse' | 'burn' | 'poison' | 'all';
+  revive: boolean;
+  reviveHP?: number;
   description: string;
   cost: number;
 }
 
+
 export interface Machine {
+  _id: string;
   name: string;
   move: string;
   value: 'HM' | 'TM';
@@ -181,7 +187,9 @@ export interface Machine {
   cost: number;
 }
 
+
 export interface Ball {
+  _id: string;
   name: string;
   bonus: number;
   description: string;
@@ -189,6 +197,7 @@ export interface Ball {
 }
 
 export interface KeyItem {
+  _id: string;
   name: string;
   description: string;
 }

@@ -269,6 +269,10 @@
   cursor: pointer;
 }
 
+.party-level {
+  margin-right: 10px;
+}
+
 .pokemon:hover {
   background-color: rgba(155, 155, 55, .3);
 }

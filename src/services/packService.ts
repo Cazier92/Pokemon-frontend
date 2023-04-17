@@ -4,6 +4,7 @@ import * as tokenService from './tokenService'
 // types
 import { Pack } from '../types/models'
 import { Ball } from '../types/models'
+import { BallData } from '../types/forms'
 
 const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/api/pack`
 
@@ -41,7 +42,7 @@ async function changePackStatus(): Promise<Pack> {
   }
 }
 
-async function createBall(ballData: Ball): Promise<Pack> {
+async function createBall(ballData: BallData): Promise<Pack> {
   try {
     const res = await fetch(`${BASE_URL}/ball`, {
       method: 'POST',

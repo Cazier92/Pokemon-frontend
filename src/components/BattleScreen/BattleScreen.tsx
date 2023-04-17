@@ -51,6 +51,8 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [attacker, setAttacker] = useState<Pokemon>()
   const [target, setTarget] = useState<Pokemon>()
   const [secondTurn, setSecondTurn] = useState<boolean>(false)
+  const [opponentFainted, setOpponentFainted] = useState<boolean>(false)
+  const [userFainted, setUserFainted] = useState<boolean>(false)
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -449,7 +451,8 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
                 <div className='pokemon' onClick={() => handleChangePokemon(pokemon)}>
                   <p>{capPokemon(pokemon)}</p>
                   <img src={pokemon.spriteFront} alt="" />
-                  <p>Lv: {pokemon.level}</p>
+                  <p className='party-level'>Lv: {pokemon.level}</p>
+                  <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{pokemon.totalHP} HP</p>
                   {pokemon._id === partyPokemon._id ? (<></>) : 
                   (<>
                     <div>
@@ -476,6 +479,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
                 <div className='item'>
                   <p>{ball.name}</p>
                   <p className='item-description'>{ball.description}</p>
+                  <p className='item-description'>Use this item?</p>
                 </div>
                 )}
               </>) : (<></>)}
@@ -493,11 +497,15 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               </div>
             </div>
           ) : (<></>)}
-          {showBattleText ? 
+          {showBattleText && secondMove && attacker && target ? 
           (<div className='battle-text-div' onClick={() => handleNextMove(secondMove, attacker, target, opponentTurn)}>
             <p className='battle-text'>{battleText}</p>
           </div>) 
-          : (<></>)}
+          : showBattleText ? 
+          (<div className='battle-text-div'>
+          <p className='battle-text'>{battleText}</p>
+          </div>) 
+          : (<></>) }
           {secondTurn ? 
           (<div className='battle-text-div' onClick={() => setSecondTurn(false)}>
             <p className='battle-text'>{battleText}</p>
