@@ -33,13 +33,13 @@ async function findMove(moveId: Move['_id']): Promise<Move> {
   }
 }
 
-async function useBall(ballId: Ball['_id'], pokemonId: Pokemon['_id']): Promise<[Profile, Pokemon, string] | [Profile, string] > {
+async function useBall(ballId: Ball['_id'], pokemonId: Pokemon['_id']): Promise<[Profile, Pokemon, string] | [Profile, string, boolean] > {
   try {
     const res = await fetch(`${BASE_URL}/ball/${ballId}/${pokemonId}`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
     })
-    return await res.json() as [Profile, Pokemon, string] | [Profile, string]
+    return await res.json() as [Profile, Pokemon, string] | [Profile, string, boolean]
   } catch (error) {
     throw error
   }

@@ -61,6 +61,11 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [showErrMsg, setShowErrMsg] = useState<boolean>(false)
   const [medMsg, setMedMsg] = useState<string>('')
   const [showMedMsg, setShowMedMsg] = useState<boolean>(false)
+  const [ballMsg, setBallMsg] = useState<string>('')
+  const [showBallMsg, setShowBallMsg] = useState<boolean>(false)
+  const [ball, setBall] = useState<Ball>()
+  const [caughtMsg, setCaughtMsg] = useState<string>('')
+  const [showCaughtMsg, setShowCaughtMsg] = useState<boolean>(false)
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -83,6 +88,8 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     if (newPokemon.currentHP <= 0) {
       setOpponentFaintTxt(`Wild ${newPokemon.name} fainted!`)
       setOpponentFainted(true)
+    } else {
+      setOpponentFainted(false)
     }
   }, [newPokemon])
 
@@ -170,11 +177,59 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       playerHealth.style.width = `${playerHealthPer}%`
     }
 
+    const handleChooseBall = async (packBall: Ball): Promise<void> => {
+      setBall(packBall)
+      setBallMsg(`You threw a ${packBall.name}!`)
+      setShowBallMsg(true)
+      setShowBalls(false)
+      handleShowNone()
+    }
+
+    const handleUseBall = async (): Promise<void> => {
+      if (ball) {
+        setShowBallMsg(false)
+        const ballResponse = await battleService.useBall(ball._id, newPokemon._id)
+        setBall(undefined)
+        setUserProfile(ballResponse[0])
+        if (typeof ballResponse[1] === 'string') {
+          if (ballResponse[2] === true) {
+            const foundOpponent = await pokemonService.findPokemon(newPokemon._id)
+            setNewPokemon(foundOpponent)
+            let opponentMoveSet: Move[] = []
+            foundOpponent.moveSet.forEach(move => {
+              if (move.currentPP > 0) {
+                opponentMoveSet.push(move)
+              }
+            })
+            const randomNum = Math.floor(Math.random() * opponentMoveSet.length)
+            const opponentMoveId = opponentMoveSet[randomNum]
+            const opponentMove = await battleService.findMove(opponentMoveId._id)
+            setSecondMove(opponentMove)
+            setOpponentTurn(true)
+            setTarget(partyPokemon)
+            setAttacker(foundOpponent)
+            setMedMsg(ballResponse[1])
+            setShowMedMsg(true)
+          } else {
+            setErrMsg(ballResponse[1])
+            setShowErrMsg(true)
+          }
+        } else if (typeof ballResponse[2] === 'string') {
+          setCaughtMsg(ballResponse[2])
+          setShowCaughtMsg(true)
+        }
+      }
+    }
+
+    const handleEndBattle = (): void => {
+      setShowCaughtMsg(false)
+      battleUnInit()
+    }
+
     const handleChooseMedicine = async (medicine: Medicine): Promise<void> => {
       setMed(medicine)
       setShowPack(false)
       setShowPokList(true)
-      console.log(medicine)
     }
 
     const cancelMed = async (): Promise<void> => {
@@ -230,6 +285,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       const opponentMoveId = opponentMoveSet[randomNum]
       const opponentMove = await battleService.findMove(opponentMoveId._id)
       const moves: Move[] = [move, opponentMove]
+      console.log(move, opponentMove)
       if (moves[0].priority > moves[1].priority) {
         setBattleText(`${userPok.name} used ${move.name}!`)
         setShowBattleText(true)
@@ -466,9 +522,19 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
             <p className='opponent-faint-txt'>{errMsg}</p>
           </div>) 
           : (<></>)}
+          {showCaughtMsg && caughtMsg ? 
+          (<div className='opponent-faint' onClick={() => handleEndBattle()}>
+            <p className='opponent-faint-txt'>{caughtMsg}</p>
+          </div>) 
+          : (<></>)}
           {showMedMsg && medMsg && secondMove && attacker && target ? 
           (<div className='opponent-faint' onClick={() => handleNextMove(secondMove, attacker, target, opponentTurn)}>
             <p className='opponent-faint-txt'>{medMsg}</p>
+          </div>) 
+          : (<></>)}
+          {showBallMsg && ballMsg ? 
+          (<div className='opponent-faint'onClick={() => handleUseBall()}>
+            <p className='opponent-faint-txt'>{ballMsg}</p>
           </div>) 
           : (<></>)}
           {partyPokemon ? 
@@ -581,7 +647,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               {showBalls && pack ? 
               (<div className='item-list'>
                 {pack.ballPocket.map((ball) => 
-                <div className='item'>
+                <div className='item' onClick={() => handleChooseBall(ball)}>
                   <p>{ball.name}</p>
                   <p className='item-description'>{ball.description}</p>
                   <p className='item-description'>Use this item?</p>
