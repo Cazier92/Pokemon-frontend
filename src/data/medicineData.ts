@@ -17,7 +17,7 @@ const maxRevive: MedicineData = {
   revive: true,
   reviveHP: 1,
   description: "Revives a fainted pokémon, restoring all of it's HP.",
-  cost: 1000
+  cost: 1500
 }
 
 const potion: MedicineData = {
@@ -62,8 +62,18 @@ const fullRestore: MedicineData = {
   value: 750,
   condition: 'all',
   revive: false,
-  description: "Fully restores a pokémon's health.",
+  description: "Fully restores a pokémon's health, and cures any status conditions.",
   cost: 1200
+}
+
+const maxHeal: MedicineData = {
+  name: 'Max Heal',
+  affects: ['status'],
+  value: 0,
+  condition: 'all',
+  revive: false,
+  description: "Cures all status conditions of a pokémon.",
+  cost: 800
 }
 
 const paralyzeHeal: MedicineData = {
@@ -72,7 +82,7 @@ const paralyzeHeal: MedicineData = {
   value: 0,
   condition: 'paralyze',
   revive: false,
-  description: "Heals paralysis.",
+  description: "Cures paralysis.",
   cost: 200
 }
 
@@ -92,7 +102,7 @@ const freezeHeal: MedicineData = {
   value: 0,
   condition: 'freeze',
   revive: false,
-  description: "Heals a frozen pokémon.",
+  description: "Cures a frozen pokémon.",
   cost: 200
 }
 
@@ -102,7 +112,7 @@ const confuseHeal: MedicineData = {
   value: 0,
   condition: 'confuse',
   revive: false,
-  description: "Heals a confused pokémon.",
+  description: "Cures a confused pokémon.",
   cost: 200
 }
 
@@ -112,7 +122,7 @@ const burnHeal: MedicineData = {
   value: 0,
   condition: 'burn',
   revive: false,
-  description: "Heals a burned pokémon.",
+  description: "Cures a burned pokémon.",
   cost: 200
 }
 
@@ -122,7 +132,7 @@ const poisonHeal: MedicineData = {
   value: 0,
   condition: 'poison',
   revive: false,
-  description: "Heals a poisoned pokémon.",
+  description: "Cures a poisoned pokémon.",
   cost: 200
 }
 

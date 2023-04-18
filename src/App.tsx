@@ -34,6 +34,8 @@ import { Pack } from './types/models'
 
 // data 
 import { pokeball } from './data/ballData'
+import { revive } from './data/medicineData'
+import { potion } from './data/medicineData'
 
 // forms
 import { ProfileData } from './types/forms'
@@ -123,8 +125,17 @@ function App(): JSX.Element {
             console.log('BALL CREATED')
           }
           createBall()
+        } else if (pack.medicinePocket.length < 10) {
+          console.log('CREATING MEDICINE')
+          const createMedicine = async (): Promise<void> => {
+            await packService.createMedicine(revive)
+            const updatedPack = await packService.createMedicine(potion)
+            setPack(updatedPack)
+            console.log('MEDICINE CREATED')
+          }
+          createMedicine()
         } else {
-          console.log('5+ BALLS')
+          console.log('FULL PACK')
           const changeStatus = async (): Promise<void> => {
             const updatedPack = await packService.changePackStatus()
             setPack(updatedPack)
@@ -139,7 +150,7 @@ function App(): JSX.Element {
     }
   }, [pack])
 
-  
+  // console.log(pack)
 
   useEffect(():void => {
     if (userProfile?.coordinates.land) {

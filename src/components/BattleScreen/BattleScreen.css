@@ -260,6 +260,13 @@
   border-radius: 10px;
 }
 
+.pokemon-med-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(155, 155, 55, .4);
+}
+
 .pokemon {
   display: flex;
   align-items: center;
@@ -279,8 +286,15 @@
 
 .party-close {
   position: absolute;
-  bottom: 5px;
-  right: 5px;
+  bottom: 0px;
+  /* right: 5px; */
+  width: 100%;
+  background-color: rgba(155, 155, 55, .3);
+  border-top: 2px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 7%;
 }
 
 .party-close>button {
@@ -308,7 +322,12 @@
   top: 59%;
   border: 5px solid black;
   border-radius: 10px;
+  /* overflow: scroll; */
+}
+
+.item-list {
   overflow: scroll;
+  height: 87%;
 }
 
 .pocket-selection {
@@ -346,6 +365,24 @@
 }
 
 .battle-text-div {
+  position: absolute;
+  z-index: 10;
+  top: 102%;
+  left: 6%;
+  background-color: white;
+  height: 16%;
+  border: 5px solid black;
+  border-radius: 5px;
+  width: 87%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 5vmin;
+  cursor: pointer;
+}
+
+.opponent-faint {
   position: absolute;
   z-index: 10;
   top: 102%;
