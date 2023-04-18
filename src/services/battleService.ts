@@ -45,13 +45,13 @@ async function useBall(ballId: Ball['_id'], pokemonId: Pokemon['_id']): Promise<
   }
 }
 
-async function useMedicine(medicineId: Medicine['_id'], pokemonId: Pokemon['_id']): Promise<[Profile, Pokemon] | string > {
+async function useMedicine(medicineId: Medicine['_id'], pokemonId: Pokemon['_id']): Promise<[Profile, Pokemon, string] | string > {
   try {
     const res = await fetch(`${BASE_URL}/useMedicine/${medicineId}/${pokemonId}`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
     })
-    return await res.json() as [Profile, Pokemon] | string
+    return await res.json() as [Profile, Pokemon, string] | string
   } catch (error) {
     throw error
   }

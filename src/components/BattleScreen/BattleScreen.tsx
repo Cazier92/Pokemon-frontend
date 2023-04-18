@@ -59,6 +59,8 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [showPokList, setShowPokList] = useState<boolean>(false)
   const [errMsg, setErrMsg] = useState<string>('')
   const [showErrMsg, setShowErrMsg] = useState<boolean>(false)
+  const [medMsg, setMedMsg] = useState<string>('')
+  const [showMedMsg, setShowMedMsg] = useState<boolean>(false)
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -172,6 +174,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       setMed(medicine)
       setShowPack(false)
       setShowPokList(true)
+      console.log(medicine)
     }
 
     const cancelMed = async (): Promise<void> => {
@@ -191,6 +194,23 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           setShowErrMsg(true)
         } else {
           setUserProfile(medResponse[0])
+          const foundOpponent = await pokemonService.findPokemon(newPokemon._id)
+          setNewPokemon(foundOpponent)
+          let opponentMoveSet: Move[] = []
+          foundOpponent.moveSet.forEach(move => {
+            if (move.currentPP > 0) {
+              opponentMoveSet.push(move)
+            }
+          })
+          const randomNum = Math.floor(Math.random() * opponentMoveSet.length)
+          const opponentMoveId = opponentMoveSet[randomNum]
+          const opponentMove = await battleService.findMove(opponentMoveId._id)
+          setSecondMove(opponentMove)
+          setOpponentTurn(true)
+          setTarget(partyPokemon)
+          setAttacker(foundOpponent)
+          setMedMsg(medResponse[2])
+          setShowMedMsg(true)
         }
       }
     }
@@ -205,8 +225,8 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
         }
       })
       const randomNum = Math.floor(Math.random() * opponentMoveSet.length)
-      console.log('RANDOMNUM:', randomNum)
-      console.log('OPPONENT MOVESET:', foundOpponent.moveSet)
+      // console.log('RANDOMNUM:', randomNum)
+      // console.log('OPPONENT MOVESET:', foundOpponent.moveSet)
       const opponentMoveId = opponentMoveSet[randomNum]
       const opponentMove = await battleService.findMove(opponentMoveId._id)
       const moves: Move[] = [move, opponentMove]
@@ -265,29 +285,34 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     }
 
     const handleNextMove = async (move: Move, attacker: Pokemon, target: Pokemon, opponentTurn: boolean): Promise<void> => {
-      setBattleText(`${attacker.name} used ${move.name}!`)
-      setShowBattleText(false)
-      setSecondTurn(true)
-      if (opponentTurn) {
-        const updatedUser = await battleService.useMove(move._id, attacker._id, target._id)
-        setPartyPokemon(updatedUser)
-        setPlayerHealthPer((75 * (updatedUser.currentHP/ updatedUser.totalHP)))
-        console.log(updatedUser)
-        const updatedOpponent = await pokemonService.findPokemon(newPokemon._id)
-        setNewPokemon(updatedOpponent)
-        // const updatedUserProfile = await profileService.getUser()
-        const profilesData: Profile[] = await profileService.getAllProfiles()
-        setUserProfile(profilesData.find(profile => profile._id === user?.profile))
+      if (attacker.currentHP > 0) {
+        setShowMedMsg(false)
+        setBattleText(`${attacker.name} used ${move.name}!`)
+        setShowBattleText(false)
+        setSecondTurn(true)
+        if (opponentTurn) {
+          const updatedUser = await battleService.useMove(move._id, attacker._id, target._id)
+          setPartyPokemon(updatedUser)
+          setPlayerHealthPer((75 * (updatedUser.currentHP/ updatedUser.totalHP)))
+          console.log(updatedUser)
+          const updatedOpponent = await pokemonService.findPokemon(newPokemon._id)
+          setNewPokemon(updatedOpponent)
+          // const updatedUserProfile = await profileService.getUser()
+          const profilesData: Profile[] = await profileService.getAllProfiles()
+          setUserProfile(profilesData.find(profile => profile._id === user?.profile))
+        } else {
+          const updatedOpponent = await battleService.useMove(move._id, attacker._id, target._id)
+          setNewPokemon(updatedOpponent)
+          setOpponentHealthPer((75 * (updatedOpponent.currentHP/ updatedOpponent.totalHP)))
+          const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
+          setPartyPokemon(updatedUser)
+          // const updatedUserProfile = await profileService.getUser()
+          // setUserProfile(updatedUserProfile)
+          const profilesData: Profile[] = await profileService.getAllProfiles()
+          setUserProfile(profilesData.find(profile => profile._id === user?.profile))
+        }
       } else {
-        const updatedOpponent = await battleService.useMove(move._id, attacker._id, target._id)
-        setNewPokemon(updatedOpponent)
-        setOpponentHealthPer((75 * (updatedOpponent.currentHP/ updatedOpponent.totalHP)))
-        const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
-        setPartyPokemon(updatedUser)
-        // const updatedUserProfile = await profileService.getUser()
-        // setUserProfile(updatedUserProfile)
-        const profilesData: Profile[] = await profileService.getAllProfiles()
-        setUserProfile(profilesData.find(profile => profile._id === user?.profile))
+        setShowBattleText(false)
       }
     }
 
@@ -439,6 +464,11 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           {showErrMsg && errMsg ? 
           (<div className='opponent-faint' onClick={() => setShowErrMsg(false)}>
             <p className='opponent-faint-txt'>{errMsg}</p>
+          </div>) 
+          : (<></>)}
+          {showMedMsg && medMsg && secondMove && attacker && target ? 
+          (<div className='opponent-faint' onClick={() => handleNextMove(secondMove, attacker, target, opponentTurn)}>
+            <p className='opponent-faint-txt'>{medMsg}</p>
           </div>) 
           : (<></>)}
           {partyPokemon ? 
