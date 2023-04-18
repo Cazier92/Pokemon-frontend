@@ -374,7 +374,8 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
 
     const handleChangePokemon = async (pokemon: Pokemon): Promise<void> => {
       if (pokemon._id !== partyPokemon._id) {
-        setPartyPokemon(pokemon)
+        const newPartyPok = await pokemonService.findPokemon(pokemon._id)
+        setPartyPokemon(newPartyPok)
         handleShowNone()
       }
     }
