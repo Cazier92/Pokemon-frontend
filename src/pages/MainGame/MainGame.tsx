@@ -52,6 +52,10 @@ const MainGame = (props: MainGameProps): JSX.Element => {
 
   const [battleActive, setBattleActive] = useState<boolean>(false)
   const [gameStarted, setGameStarted] = useState<boolean>(false)
+  const [up, setUp] = useState<boolean>(false)
+  const [down, setDown] = useState<boolean>(false)
+  const [left, setLeft] = useState<boolean>(false)
+  const [right, setRight] = useState<boolean>(false)
   const navigate = useNavigate()
 
   const handleStart = () => {
@@ -62,6 +66,10 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   let newX = 0
   let newY = 0
   
+  // let up = false
+  // let down = false
+  // let left = false
+  // let right = false
 
   const handleKeyDown = (e: KeyboardEvent) => {
     switch (e.key) {
@@ -99,14 +107,20 @@ const MainGame = (props: MainGameProps): JSX.Element => {
     }
   }
 
+
+
+  
   window.addEventListener('keydown', handleKeyDown)
-
+  
   window.addEventListener('keyup', handleKeyUp)
+  
 
-
+  // const testH1 = document.getElementById('test-mouse')
+  
+  
   let randomNum = (Math.random())
-
-
+  
+  
   const keys = {
     w: {
       pressed: false
@@ -121,6 +135,81 @@ const MainGame = (props: MainGameProps): JSX.Element => {
       pressed: false
     },
   }
+  const upKey = document.getElementById('up')
+  const downKey = document.getElementById('down')
+  const leftKey = document.getElementById('left')
+  const rightKey = document.getElementById('right')
+
+  const handleMouseDown = (e: TouchEvent | MouseEvent) => {
+    if (upKey && downKey && leftKey && rightKey)
+    if (e.target === upKey) {
+      keys.w.pressed = true
+      // up = true
+      // setUp(true)
+    }
+    if (e.target === leftKey) {
+      keys.a.pressed = true
+      // left = true
+      // setLeft(true)
+    }
+    if (e.target === rightKey) {
+      keys.d.pressed = true
+      // right = true
+      // setRight(true)
+    }
+    if (e.target === downKey) {
+      keys.s.pressed = true
+      // down = true
+      // setDown(true)
+    }
+  }
+
+  const handleMouseUp = (e: TouchEvent | MouseEvent) => {
+    keys.w.pressed = false
+    keys.a.pressed = false
+    keys.d.pressed = false
+    keys.s.pressed = false
+    // setUp(false)
+    // setLeft(false)
+    // setRight(false)
+    // setDown(false)
+  }
+
+  window.addEventListener('touchstart', handleMouseDown)
+  window.addEventListener('touchend', handleMouseUp)
+  window.addEventListener('mousedown', handleMouseDown)
+  window.addEventListener('mouseup', handleMouseUp)
+  
+  // if (left) {
+  //   keys.a.pressed = true
+  //   keys.s.pressed = false
+  //   keys.w.pressed = false
+  //   keys.d.pressed = false
+  // }
+  // if (right) {
+  //   keys.a.pressed = false
+  //   keys.s.pressed = false
+  //   keys.w.pressed = false
+  //   keys.d.pressed = true
+  // }
+  // if (up) {
+  //   keys.a.pressed = false
+  //   keys.s.pressed = false
+  //   keys.w.pressed = true
+  //   keys.d.pressed = false
+  // }
+  // if (down) {
+  //   keys.a.pressed = false
+  //   keys.s.pressed = true
+  //   keys.w.pressed = false
+  //   keys.d.pressed = false
+  // }
+  // if (!down && !up && !left && !right) {
+  //   keys.a.pressed = false
+  //   keys.s.pressed = false
+  //   keys.w.pressed = false
+  //   keys.d.pressed = false
+  // }
   
   const capPokemon = (pokemon: Pokemon): string | undefined => {
     if (pokemon.name) {
@@ -550,7 +639,46 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   
           return (
             <>
-              <h1>Main Game Page</h1>
+              <div className='d-pad'>
+                <div className='up-div'>
+                  {up ? 
+                  (<>
+                    <i id='up' className="fa-solid fa-angles-up fa-2xl"></i>
+                  </>) 
+                  : 
+                  (<>
+                    <i id='up' className="fa-solid fa-angle-up fa-2xl"></i>
+                  </>)}
+                </div>
+                <div className='left-right-div'>
+                {left ? 
+                  (<>
+                    <i id='left' className="fa-solid fa-angles-left fa-2xl"></i>
+                    <i id='right' className="fa-solid fa-angle-right fa-2xl"></i>
+                  </>) 
+                  : right ?
+                  (<>
+                    <i id='left' className="fa-solid fa-angle-left fa-2xl"></i>
+                    <i id='right' className="fa-solid fa-angles-right fa-2xl"></i>
+                  </>)
+                  :
+                  (<>
+                    <i id='left' className="fa-solid fa-angle-left fa-2xl"></i>
+                    <i id='right' className="fa-solid fa-angle-right fa-2xl"></i>
+                  </>)
+                  }
+                </div>
+                <div className='down-div'>
+                {down ? 
+                  (<>
+                    <i id='down' className="fa-solid fa-angles-down fa-2xl"></i>
+                  </>) 
+                  : 
+                  (<>
+                    <i id='down' className="fa-solid fa-angle-down fa-2xl"></i>
+                  </>)}
+                </div>
+              </div>
               <canvas id='canvas'></canvas>
               {/* {!gameStarted ? (
                 <button onClick={() => handleStart()}>Start Game</button>
