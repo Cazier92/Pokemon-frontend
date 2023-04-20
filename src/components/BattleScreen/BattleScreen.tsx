@@ -66,6 +66,11 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [ball, setBall] = useState<Ball>()
   const [caughtMsg, setCaughtMsg] = useState<string>('')
   const [showCaughtMsg, setShowCaughtMsg] = useState<boolean>(false)
+  const [showContinue, setShowContinue] = useState<boolean>(false)
+  const [viableParty, setViableParty] = useState<boolean>(false)
+  const [checkParty, setCheckParty] = useState<boolean>(false)
+  const [startTxt, setStartTxt] = useState<string>('')
+  const [showStartTxt, setShowStartTxt] = useState<boolean>(true)
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -86,19 +91,45 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   useEffect((): void => {
     if (newPokemon)
     if (newPokemon.currentHP <= 0) {
-      setOpponentFaintTxt(`Wild ${newPokemon.name} fainted!`)
+      setOpponentFaintTxt(`The Wild ${newPokemon.name} fainted!`)
       setOpponentFainted(true)
     } else {
       setOpponentFainted(false)
     }
   }, [newPokemon])
 
-      useEffect((): void => {
-      if (newPokemon && partyPokemon) {
-        setOpponentHealthPer((75 * (newPokemon.currentHP/ newPokemon.totalHP)))
-        setPlayerHealthPer((75 * (partyPokemon.currentHP/ partyPokemon.totalHP)))
-      }
-    }, [newPokemon, partyPokemon])
+  useEffect((): void => {
+    if (newPokemon)
+    setStartTxt(`A wild ${newPokemon.name} appeared!`)
+  }, [newPokemon])
+
+  useEffect((): void => {
+    if (partyPokemon)
+    if (partyPokemon.currentHP <= 0) {
+      setOpponentFaintTxt(`Oh no! ${partyPokemon.name} fainted!`)
+      setUserFainted(true)
+      setCheckParty(!checkParty)
+    } else {
+      setOpponentFainted(false)
+    }
+  }, [partyPokemon])
+
+  useEffect((): void => {
+    if (fullParty) {
+      fullParty.forEach(pokemon => {
+        if (pokemon.currentHP >= 0) {
+          setViableParty(true)
+        }
+      })
+    }
+  }, [checkParty, fullParty])
+
+  useEffect((): void => {
+    if (newPokemon && partyPokemon) {
+      setOpponentHealthPer((75 * (newPokemon.currentHP/ newPokemon.totalHP)))
+      setPlayerHealthPer((75 * (partyPokemon.currentHP/ partyPokemon.totalHP)))
+    }
+  }, [newPokemon, partyPokemon])
 
   const handleShowMoves = (): void => {
     setShowMoves(true)
@@ -167,6 +198,15 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       setOpponentFainted(false)
       battleUnInit()
       await battleService.faintWildPokemon(newPokemon._id)
+    }
+
+    const continueBattle = (): void => {
+      setUserFainted(false)
+      setShowContinue(true)
+    }
+
+    const expGain = async (): Promise<void> => {
+
     }
 
     
@@ -280,8 +320,6 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
         }
       })
       const randomNum = Math.floor(Math.random() * opponentMoveSet.length)
-      // console.log('RANDOMNUM:', randomNum)
-      // console.log('OPPONENT MOVESET:', foundOpponent.moveSet)
       const opponentMoveId = opponentMoveSet[randomNum]
       const opponentMove = await battleService.findMove(opponentMoveId._id)
       const moves: Move[] = [move, opponentMove]
@@ -353,7 +391,6 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           console.log(updatedUser)
           const updatedOpponent = await pokemonService.findPokemon(newPokemon._id)
           setNewPokemon(updatedOpponent)
-          // const updatedUserProfile = await profileService.getUser()
           const profilesData: Profile[] = await profileService.getAllProfiles()
           setUserProfile(profilesData.find(profile => profile._id === user?.profile))
         } else {
@@ -362,8 +399,6 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           setOpponentHealthPer((75 * (updatedOpponent.currentHP/ updatedOpponent.totalHP)))
           const updatedUser = await pokemonService.findPokemon(partyPokemon._id)
           setPartyPokemon(updatedUser)
-          // const updatedUserProfile = await profileService.getUser()
-          // setUserProfile(updatedUserProfile)
           const profilesData: Profile[] = await profileService.getAllProfiles()
           setUserProfile(profilesData.find(profile => profile._id === user?.profile))
         }
@@ -373,7 +408,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     }
 
     const handleChangePokemon = async (pokemon: Pokemon): Promise<void> => {
-      if (pokemon._id !== partyPokemon._id) {
+      if (pokemon._id !== partyPokemon._id && pokemon.currentHP > 0) {
         const newPartyPok = await pokemonService.findPokemon(pokemon._id)
         setPartyPokemon(newPartyPok)
         handleShowNone()
@@ -518,6 +553,25 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
             <p className='opponent-faint-txt'>{opponentFaintTxt}</p>
           </div>) 
           : (<></>)}
+          {showStartTxt ? 
+          (<div className='opponent-faint' onClick={() => setShowStartTxt(false)}>
+            <p className='opponent-faint-txt'>{startTxt}</p>
+          </div>) 
+          : (<></>)}
+          {userFainted ? 
+          (<div className='opponent-faint'>
+            <p className='opponent-faint-txt'>{opponentFaintTxt}</p>
+            {viableParty ? 
+            (<>
+              <button onClick={() => continueBattle()}>Continue?</button>
+              <button onClick={() => battleUnInit()}>Run?</button>
+            </>) 
+            : 
+            (<>
+              <button onClick={() => battleUnInit()}>End Battle</button>
+            </>)}
+          </div>) 
+          : (<></>)}
           {showErrMsg && errMsg ? 
           (<div className='opponent-faint' onClick={() => setShowErrMsg(false)}>
             <p className='opponent-faint-txt'>{errMsg}</p>
@@ -610,6 +664,29 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               }
               <div className='party-close'>
                 <button onClick={() => handleShowNone()} className='menu-close-btn'>Close</button>
+              </div>
+            </div>
+          ) : (<></>)}
+          {showContinue ? (
+            <div className='party-menu'>
+              {
+                fullParty.map((pokemon) => 
+                <div className='pokemon' onClick={() => handleChangePokemon(pokemon)}>
+                  <p>{capPokemon(pokemon)}</p>
+                  <img src={pokemon.spriteFront} alt="" />
+                  <p className='party-level'>Lv: {pokemon.level}</p>
+                  <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{pokemon.totalHP} HP</p>
+                  {pokemon._id === partyPokemon._id || pokemon.currentHP <= 0 ? (<></>) : 
+                  (<>
+                    <div>
+                      <p>Choose this pokemon!</p>
+                    </div>
+                  </>)}
+                </div>
+                )
+              }
+              <div className='party-close'>
+                <button onClick={() => battleUnInit()} className='menu-close-btn'>Cancel</button>
               </div>
             </div>
           ) : (<></>)}

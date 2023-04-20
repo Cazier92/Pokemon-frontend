@@ -64,7 +64,53 @@ async function addPokemonToPC(userId: Profile['_id'], pokemonId: Pokemon['_id'])
   }
 }
 
+async function expGain(id: Pokemon['_id'], fainted: Pokemon['_id']): Promise<Pokemon> {
+  try {
+    const res = await fetch(`${BASE_URL}/expgain/${id}/${fainted}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+    })
+    return await res.json() as Pokemon
+  } catch (error) {
+    throw error
+  }
+}
 
+async function levelUp(id: Pokemon['_id']): Promise<Pokemon | string> {
+  try {
+    const res = await fetch(`${BASE_URL}/levelup/${id}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+    })
+    return await res.json() as Pokemon | string
+  } catch (error) {
+    throw error
+  }
+}
+
+async function evolve(id: Pokemon['_id']): Promise<Pokemon | string> {
+  try {
+    const res = await fetch(`${BASE_URL}/evolve/${id}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+    })
+    return await res.json() as Pokemon | string
+  } catch (error) {
+    throw error
+  }
+}
+
+async function newMove(id: Pokemon['_id']): Promise<Pokemon | string> {
+  try {
+    const res = await fetch(`${BASE_URL}/newmove/${id}`, {
+      method: 'PUT',
+      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+    })
+    return await res.json() as Pokemon | string
+  } catch (error) {
+    throw error
+  }
+}
 
 export {
   getAllPokemon,
@@ -72,4 +118,8 @@ export {
   addPokemonToParty,
   addPokemonToPC,
   findPokemon,
+  expGain,
+  levelUp,
+  evolve,
+  newMove,
 }
