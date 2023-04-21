@@ -10,6 +10,7 @@ import { Pack } from '../../types/models';
 import { Ball } from '../../types/models';
 import { Move } from '../../types/models';
 import { Medicine } from '../../types/models';
+import { PotentialMove } from '../../types/models';
 
 import * as pokemonService from '../../services/pokemonService'
 import * as packService from '../../services/packService'
@@ -71,6 +72,12 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [checkParty, setCheckParty] = useState<boolean>(false)
   const [startTxt, setStartTxt] = useState<string>('')
   const [showStartTxt, setShowStartTxt] = useState<boolean>(true)
+  const [showExpGain, setShowExpGain] = useState<boolean>(false)
+  const [showLevelUp, setShowLevelUp] = useState<boolean>(false)
+  const [showEvolve, setShowEvolve] = useState<boolean>(false)
+  const [levelUpMoves, setLevelUpMoves] = useState<PotentialMove[]>()
+  const [showLevelUpMoves, setShowLevelUpMoves] = useState<boolean>(false)
+  const [learnedMove, setLearnedMove] = useState<boolean>(false)
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -206,6 +213,40 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     }
 
     const expGain = async (): Promise<void> => {
+      if (newPokemon.currentHP <= 0) {
+        setOpponentFainted(true)
+        setShowExpGain(true)
+        const updatedPokemon = await pokemonService.expGain(partyPokemon._id, newPokemon._id)
+        setPartyPokemon(updatedPokemon)
+      }
+    }
+
+    const levelUp = async (): Promise<void> => {
+      if (partyPokemon.currentExp >= partyPokemon.nextLevelExp) {
+        const updatedPokemon = await pokemonService.levelUp(partyPokemon._id)
+        if (typeof updatedPokemon !== 'string') {
+          setPartyPokemon(updatedPokemon)
+          setShowLevelUp(true)
+        }
+      } else {
+        faintPokemon()
+      }
+    }
+
+    const checkForMoves = (): void => {
+      let moves: PotentialMove[] = []
+      partyPokemon.potentialMoves.forEach(move => {
+        if (move.method === 'level-up' && move.level === partyPokemon.level) {
+          moves.push(move)
+        }
+      })
+      if (moves.length) {
+        setLevelUpMoves(moves)
+        
+      }
+    }
+
+    const evolve = async (): Promise<void> => {
 
     }
 
@@ -350,7 +391,6 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
         setAttacker(updatedUser)
       } else {
         if (userPok.speed > foundOpponent.speed) {
-          console.log('HERE')
           setBattleText(`${userPok.name} used ${move.name}!`)
           setShowBattleText(true)
           const updatedOpponent = await battleService.useMove(moves[0]._id, userPok._id, foundOpponent._id)
@@ -549,8 +589,18 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           </div>
           </>) : (<></>)}
           {opponentFainted ? 
-          (<div className='opponent-faint' onClick={() => faintPokemon()}>
+          (<div className='opponent-faint' onClick={() => expGain()}>
             <p className='opponent-faint-txt'>{opponentFaintTxt}</p>
+          </div>) 
+          : (<></>)}
+          {showExpGain ? 
+          (<div className='opponent-faint' onClick={() => levelUp()}>
+            <p className='opponent-faint-txt'>{capPokemon(partyPokemon)} gained experience for defeating the wild {capPokemon(newPokemon)!}</p>
+          </div>) 
+          : (<></>)}
+          {showLevelUp ? 
+          (<div className='opponent-faint' onClick={() => faintPokemon()}>
+            <p className='opponent-faint-txt'>{capPokemon(partyPokemon)} leveled up to level {partyPokemon.level}!</p>
           </div>) 
           : (<></>)}
           {showStartTxt ? 

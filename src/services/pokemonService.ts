@@ -4,6 +4,7 @@ import * as tokenService from './tokenService'
 // types
 import { Pokemon } from '../types/models'
 import { Profile } from '../types/models'
+import { PotentialMove } from '../types/models'
 
 const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/api/pokemon`
 
@@ -100,11 +101,15 @@ async function evolve(id: Pokemon['_id']): Promise<Pokemon | string> {
   }
 }
 
-async function newMove(id: Pokemon['_id']): Promise<Pokemon | string> {
+async function newMove(id: Pokemon['_id'], moveData: PotentialMove): Promise<Pokemon | string> {
   try {
     const res = await fetch(`${BASE_URL}/newmove/${id}`, {
       method: 'PUT',
-      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${tokenService.getToken()}` 
+      },
+      body: JSON.stringify(moveData),
     })
     return await res.json() as Pokemon | string
   } catch (error) {

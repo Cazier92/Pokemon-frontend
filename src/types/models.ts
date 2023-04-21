@@ -43,6 +43,7 @@ export interface Type {
 export interface PotentialMove {
   name: string;
   url: string;
+  level: number;
   method: 'level-up' | 'egg' | 'machine' | 'tutor';
 }
 
