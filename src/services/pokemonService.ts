@@ -5,6 +5,7 @@ import * as tokenService from './tokenService'
 import { Pokemon } from '../types/models'
 import { Profile } from '../types/models'
 import { PotentialMove } from '../types/models'
+import { LearnMoveForm } from '../types/forms'
 
 const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/api/pokemon`
 
@@ -101,7 +102,7 @@ async function evolve(id: Pokemon['_id']): Promise<Pokemon | string> {
   }
 }
 
-async function newMove(id: Pokemon['_id'], moveData: PotentialMove): Promise<Pokemon | string> {
+async function newMove( id: Pokemon['_id'], moveData: LearnMoveForm ): Promise<Pokemon> {
   try {
     const res = await fetch(`${BASE_URL}/newmove/${id}`, {
       method: 'PUT',
@@ -111,7 +112,7 @@ async function newMove(id: Pokemon['_id'], moveData: PotentialMove): Promise<Pok
       },
       body: JSON.stringify(moveData),
     })
-    return await res.json() as Pokemon | string
+    return await res.json() as Pokemon
   } catch (error) {
     throw error
   }

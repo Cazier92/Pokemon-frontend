@@ -419,14 +419,14 @@ const MainGame = (props: MainGameProps): JSX.Element => {
                         land: true
                       }
                     }, userProfile._id)
-                    console.log('WILD POKEMON ENCOUNTERED')
+                    // console.log('WILD POKEMON ENCOUNTERED')
                     let minLevel = currentMap.grassPokemon.minLevel
                     let maxLevel = currentMap.grassPokemon.maxLevel
                     const pokemonFound = currentMap.grassPokemon.pokedexNums
                     const pokemonLevel = (Math.floor(Math.random() * ((maxLevel + 1) - minLevel) + minLevel))
                     let pokemonIdx = (Math.floor(Math.random() * pokemonFound.length))
                     const pokemonNum = pokemonFound[pokemonIdx]
-                    console.log('num:', pokemonNum, 'level:', pokemonLevel)
+                    // console.log('num:', pokemonNum, 'level:', pokemonLevel)
                     handleGeneratePokemon(pokemonNum, pokemonLevel)
                     
                     break

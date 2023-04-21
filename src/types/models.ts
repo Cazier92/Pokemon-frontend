@@ -174,6 +174,7 @@ export interface Medicine {
   condition?: 'paralyze' | 'sleep' | 'freeze' | 'confuse' | 'burn' | 'poison' | 'all';
   revive: boolean;
   reviveHP?: number;
+  ether: boolean;
   description: string;
   cost: number;
 }

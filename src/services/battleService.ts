@@ -7,6 +7,7 @@ import { Move } from '../types/models'
 import { Ball } from '../types/models'
 import { Profile } from '../types/models'
 import { Medicine } from '../types/models'
+import { MedicineMoveData } from '../types/forms'
 
 const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/api/battle`
 
@@ -45,11 +46,12 @@ async function useBall(ballId: Ball['_id'], pokemonId: Pokemon['_id']): Promise<
   }
 }
 
-async function useMedicine(medicineId: Medicine['_id'], pokemonId: Pokemon['_id']): Promise<[Profile, Pokemon, string] | string > {
+async function useMedicine(medicineId: Medicine['_id'], pokemonId: Pokemon['_id'], moveData?: MedicineMoveData): Promise<[Profile, Pokemon, string] | string > {
   try {
     const res = await fetch(`${BASE_URL}/useMedicine/${medicineId}/${pokemonId}`, {
       method: 'PUT',
       headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+      body: JSON.stringify(moveData),
     })
     return await res.json() as [Profile, Pokemon, string] | string
   } catch (error) {

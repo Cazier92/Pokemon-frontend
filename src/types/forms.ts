@@ -2,6 +2,8 @@
 
 import { Pokemon } from "./models";
 import { Offset } from "./models";
+import { Move } from "./models";
+import { PotentialMove } from "./models";
 
 export interface ProfileData {
   party?: Pokemon[];
@@ -25,6 +27,7 @@ export interface MedicineData {
   condition?: 'paralyze' | 'sleep' | 'freeze' | 'confuse' | 'burn' | 'poison' | 'all';
   revive: boolean;
   reviveHP?: number;
+  ether: boolean;
   description: string;
   cost: number;
 }
@@ -40,6 +43,15 @@ export interface MachineData {
 export interface KeyItemData {
   name: string;
   description: string;
+}
+
+export interface LearnMoveForm {
+  newMove: PotentialMove;
+  oldMoveId?: Move['_id'];
+}
+
+export interface MedicineMoveData {
+  moveId: Move['_id'];
 }
 
 /* ---------===== auth forms =====--------- */

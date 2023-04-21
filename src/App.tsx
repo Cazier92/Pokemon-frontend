@@ -125,7 +125,8 @@ function App(): JSX.Element {
             console.log('BALL CREATED')
           }
           createBall()
-        } else if (pack.medicinePocket.length < 10) {
+        } 
+        if (pack.medicinePocket.length < 10) {
           console.log('CREATING MEDICINE')
           const createMedicine = async (): Promise<void> => {
             await packService.createMedicine(revive)
@@ -134,7 +135,9 @@ function App(): JSX.Element {
             console.log('MEDICINE CREATED')
           }
           createMedicine()
-        } else {
+        } 
+        
+        if (pack.medicinePocket.length >= 10 && pack.ballPocket.length >= 5) {
           console.log('FULL PACK')
           const changeStatus = async (): Promise<void> => {
             const updatedPack = await packService.changePackStatus()
@@ -145,12 +148,12 @@ function App(): JSX.Element {
 
         }
       } else {
-        console.log('NO CHANGES TO PACK')
+        // console.log('NO CHANGES TO PACK')
       }
     }
   }, [pack])
 
-  // console.log(pack)
+
 
   useEffect(():void => {
     if (userProfile?.coordinates.land) {
@@ -199,7 +202,7 @@ function App(): JSX.Element {
   const handleUpdateProfile = async (profileData: ProfileData, _id: Profile['_id']): Promise<void> => {
     try {
       const updatedProfile = await profileService.updateProfile(profileData, _id)
-      console.log(updatedProfile)
+      // console.log(updatedProfile)
       setUpdateMap(!updateMap)
     } catch (error) {
       console.log(error)
