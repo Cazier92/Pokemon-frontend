@@ -77,6 +77,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [showExpGain, setShowExpGain] = useState<boolean>(false)
   const [showLevelUp, setShowLevelUp] = useState<boolean>(false)
   const [showEvolve, setShowEvolve] = useState<boolean>(false)
+  const [evolveTxt, setEvolveTxt] = useState<string>('')
   const [levelUpMoves, setLevelUpMoves] = useState<PotentialMove[]>([])
   const [showLevelUpMoves, setShowLevelUpMoves] = useState<boolean>(false)
   const [learnMoveTxt, setLearnMoveTxt] = useState<string>('')
@@ -273,6 +274,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     const checkForMoves = (): void => {
       let moves: PotentialMove[] = []
       setShowLevelUp(false)
+      setShowEvolve(false)
       partyPokemon.potentialMoves.forEach(move => {
         if (move.method === 'level-up' && move.level === partyPokemon.level) {
           moves.push(move)
@@ -361,9 +363,13 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       console.log('EVOLVE')
       if (partyPokemon.evolves && partyPokemon.evolvesTo[0].minLevel) {
         if (partyPokemon.level >= partyPokemon.evolvesTo[0].minLevel) {
+          const preEvolve = partyPokemon
           const updatedPokemon = await pokemonService.evolve(partyPokemon._id)
-          if (typeof updatedPokemon !== 'string')
-          setPartyPokemon(updatedPokemon)
+          if (typeof updatedPokemon !== 'string') {
+            setEvolveTxt(`${capPokemon(preEvolve)} evolved into ${capPokemon(updatedPokemon)}!`)
+            setShowEvolve(true)
+            setPartyPokemon(updatedPokemon)
+          }
         }
       }
     }
@@ -798,6 +804,11 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           {showExpGain ? 
           (<div className='opponent-faint' onClick={() => levelUp()}>
             <p className='opponent-faint-txt'>{capPokemon(partyPokemon)} gained experience for defeating the wild {capPokemon(newPokemon)!}</p>
+          </div>) 
+          : (<></>)}
+          {showEvolve ? 
+          (<div className='opponent-faint' onClick={() => checkForMoves()}>
+            <p className='opponent-faint-txt'>{evolveTxt}</p>
           </div>) 
           : (<></>)}
           {showLevelUp ? 
