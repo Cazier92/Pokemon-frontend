@@ -12,6 +12,7 @@ import { Move } from '../../types/models';
 import { Medicine } from '../../types/models';
 import { PotentialMove } from '../../types/models';
 import { LearnMoveForm } from '../../types/forms';
+import { MedicineMoveData } from '../../types/forms';
 
 import * as pokemonService from '../../services/pokemonService'
 import * as packService from '../../services/packService'
@@ -82,6 +83,10 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [learnedMove, setLearnedMove] = useState<boolean>(false)
   const [mustForget, setMustForget] = useState<boolean>(false)
   const [chooseForget, setChooseForget] = useState<boolean>(false)
+  const [etherMove, setEtherMove] = useState<MedicineMoveData>()
+  const [etherPok, setEtherPok] = useState<Pokemon>()
+  const [showEtherMoves, setShowEtherMoves] = useState<boolean>(false)
+  const [showEtherTxt, setShowEtherTxt] = useState<boolean>(false)
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -418,38 +423,103 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       setMed(undefined)
       setShowPack(false)
       setShowPokList(false)
+      setEtherPok(undefined)
+      setEtherMove(undefined)
+      setShowEtherMoves(false)
+    }
+
+    const handleChooseEtherMove = async (move: Move) => {
+      if (etherPok) {
+        setEtherMove({
+          moveId: move._id
+        })
+        setShowEtherMoves(false)
+        setShowEtherTxt(true)
+      } else {
+        console.log('NO ETHER POK')
+      }
     }
 
 
     const handleUseMedicine = async (pokemon: Pokemon): Promise<void> => {
-      if (med) {
-        setShowPack(false)
-        setShowPokList(false)
-        const medResponse = await battleService.useMedicine(med._id, pokemon._id)
-        setMed(undefined)
-        if (typeof medResponse === 'string') {
-          setErrMsg(medResponse)
-          setShowErrMsg(true)
-        } else {
-          setUserProfile(medResponse[0])
-          const foundOpponent = await pokemonService.findPokemon(newPokemon._id)
-          setNewPokemon(foundOpponent)
-          let opponentMoveSet: Move[] = []
-          foundOpponent.moveSet.forEach(move => {
-            if (move.currentPP > 0) {
-              opponentMoveSet.push(move)
+      try {
+        if (med) {
+          if (med.ether) {
+            console.log('USE ETHER')
+            if (etherMove) {
+              console.log('ETHER MOVE:', etherMove)
+              const medResponse = await battleService.useMedicine(med._id, pokemon._id, etherMove)
+              if (typeof medResponse === 'string') {
+                setErrMsg(medResponse)
+                setShowErrMsg(true)
+                setEtherPok(undefined)
+                setEtherMove(undefined)
+              } else {
+                console.log(medResponse)
+                setUserProfile(medResponse[0])
+                const foundOpponent = await pokemonService.findPokemon(newPokemon._id)
+                setNewPokemon(foundOpponent)
+                let opponentMoveSet: Move[] = []
+                foundOpponent.moveSet.forEach(move => {
+                  if (move.currentPP > 0) {
+                    opponentMoveSet.push(move)
+                  }
+                })
+                const randomNum = Math.floor(Math.random() * opponentMoveSet.length)
+                const opponentMoveId = opponentMoveSet[randomNum]
+                const opponentMove = await battleService.findMove(opponentMoveId._id)
+                setSecondMove(opponentMove)
+                setOpponentTurn(true)
+                setTarget(partyPokemon)
+                setAttacker(foundOpponent)
+                setMedMsg(medResponse[2])
+                setShowMedMsg(true)
+                setEtherPok(undefined)
+                setEtherMove(undefined)
+              }
+            } else {
+              console.log('NO ETHER MOVE')
+              const etherPok = await pokemonService.findPokemon(pokemon._id)
+              setEtherPok(etherPok)
+              setShowEtherMoves(true)
+              setShowPack(false)
+              setShowMedicine(false)
+              setShowPokList(false)
             }
-          })
-          const randomNum = Math.floor(Math.random() * opponentMoveSet.length)
-          const opponentMoveId = opponentMoveSet[randomNum]
-          const opponentMove = await battleService.findMove(opponentMoveId._id)
-          setSecondMove(opponentMove)
-          setOpponentTurn(true)
-          setTarget(partyPokemon)
-          setAttacker(foundOpponent)
-          setMedMsg(medResponse[2])
-          setShowMedMsg(true)
+          } else {
+            setShowPack(false)
+            setShowPokList(false)
+            const medResponse = await battleService.useMedicine(med._id, pokemon._id)
+            setMed(undefined)
+            if (typeof medResponse === 'string') {
+              setErrMsg(medResponse)
+              setShowErrMsg(true)
+            } else {
+              setUserProfile(medResponse[0])
+              const foundOpponent = await pokemonService.findPokemon(newPokemon._id)
+              setNewPokemon(foundOpponent)
+              let opponentMoveSet: Move[] = []
+              foundOpponent.moveSet.forEach(move => {
+                if (move.currentPP > 0) {
+                  opponentMoveSet.push(move)
+                }
+              })
+              const randomNum = Math.floor(Math.random() * opponentMoveSet.length)
+              const opponentMoveId = opponentMoveSet[randomNum]
+              const opponentMove = await battleService.findMove(opponentMoveId._id)
+              setSecondMove(opponentMove)
+              setOpponentTurn(true)
+              setTarget(partyPokemon)
+              setAttacker(foundOpponent)
+              setMedMsg(medResponse[2])
+              setShowMedMsg(true)
+  
+          }
+          }
         }
+        
+      } catch (error) {
+        console.log(error)
       }
     }
     
@@ -684,7 +754,6 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       
       return (
         <div className='battle-screen'>
-          <h1>This is a battle Screen</h1>
           <button onClick={battleUnInit}>finish battle</button>
           {newPokemon ? 
           (<>
@@ -706,6 +775,11 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           {opponentFainted ? 
           (<div className='opponent-faint' onClick={() => expGain()}>
             <p className='opponent-faint-txt'>{opponentFaintTxt}</p>
+          </div>) 
+          : (<></>)}
+          {med && showEtherTxt && etherMove && etherPok ? 
+          (<div className='opponent-faint' onClick={() => handleUseMedicine(etherPok)}>
+            <p className='opponent-faint-txt'>You used {med.name} on {capPokemon(etherPok)}!</p>
           </div>) 
           : (<></>)}
           {showExpGain ? 
@@ -818,6 +892,28 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               ) : (<></>)
               }
             </div>
+            {showEtherMoves && etherPok ? 
+            (<>
+            <div className='ether-move-menu'>
+              <div className='ether-txt-div'>
+                <p className='ether-menu-txt'>Please select one of {capPokemon(etherPok)}'s moves to restore PP:</p>
+                <button onClick={() => cancelMed()}>Cancel</button>
+              </div>
+              <div className='ether-move-selection'>
+                {
+                  etherPok.moveSet.map((move) => 
+                    <div className='move' key={move._id} onClick={() => handleChooseEtherMove(move)}>
+                      <p className='move-name'>{move.name}</p>
+                      <p className='move-pp'>{move.currentPP}/{move.totalPP}</p>
+                      <p className='move-type'>{move.type}</p>
+                    </div>
+                  )
+                }
+              </div>
+
+            </div>
+            </>) 
+            : (<></>)}
             <div className='option-selection'>
               <div className='option-div' onClick={() => handleShowMoves()}>
                 <p className='option-text'>Fight</p>
@@ -841,7 +937,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
                   <p>{capPokemon(pokemon)}</p>
                   <img src={pokemon.spriteFront} alt="" />
                   <p className='party-level'>Lv: {pokemon.level}</p>
-                  <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{pokemon.totalHP} HP</p>
+                  <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{Math.floor(pokemon.totalHP)} HP</p>
                   {pokemon._id === partyPokemon._id || pokemon.currentHP <= 0 ? (<></>) : 
                   (<>
                     <div>
@@ -890,7 +986,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
                   <p>{capPokemon(pokemon)}</p>
                   <img src={pokemon.spriteFront} alt="" />
                   <p className='party-level'>Lv: {pokemon.level}</p>
-                  <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{pokemon.totalHP} HP</p>
+                  <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{Math.floor(pokemon.totalHP)} HP</p>
                   {pokemon._id === partyPokemon._id || pokemon.currentHP <= 0 ? (<></>) : 
                   (<>
                     <div>

@@ -50,7 +50,10 @@ async function useMedicine(medicineId: Medicine['_id'], pokemonId: Pokemon['_id'
   try {
     const res = await fetch(`${BASE_URL}/useMedicine/${medicineId}/${pokemonId}`, {
       method: 'PUT',
-      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+      headers: { 
+      'Authorization': `Bearer ${tokenService.getToken()}`,
+      "Content-Type": "application/json"
+    },
       body: JSON.stringify(moveData),
     })
     return await res.json() as [Profile, Pokemon, string] | string

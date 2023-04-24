@@ -36,6 +36,7 @@ import { Pack } from './types/models'
 import { pokeball } from './data/ballData'
 import { revive } from './data/medicineData'
 import { potion } from './data/medicineData'
+import { ether } from './data/medicineData'
 
 // forms
 import { ProfileData } from './types/forms'
@@ -130,6 +131,7 @@ function App(): JSX.Element {
           console.log('CREATING MEDICINE')
           const createMedicine = async (): Promise<void> => {
             await packService.createMedicine(revive)
+            await packService.createMedicine(ether)
             const updatedPack = await packService.createMedicine(potion)
             setPack(updatedPack)
             console.log('MEDICINE CREATED')
@@ -241,6 +243,7 @@ function App(): JSX.Element {
       console.log(error)
     }
   }
+
 
 
   return (

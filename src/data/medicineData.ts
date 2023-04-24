@@ -150,6 +150,16 @@ const poisonHeal: MedicineData = {
   cost: 200
 }
 
+const ether: MedicineData = {
+  name: 'Ether',
+  affects: ['currentPP'],
+  value: 5,
+  revive: false,
+  ether: true,
+  description: "Restores up to 5 PP to a selected move of a Pokémon.",
+  cost: 500
+}
+
 export {
   revive,
   maxRevive,
@@ -158,4 +168,5 @@ export {
   hyperPotion,
   maxPotion,
   fullRestore,
+  ether,
 }
