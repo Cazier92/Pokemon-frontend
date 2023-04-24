@@ -54,6 +54,10 @@ export interface MedicineMoveData {
   moveId: Move['_id'];
 }
 
+export interface SwapPartyData {
+  swap: Number[];
+}
+
 /* ---------===== auth forms =====--------- */
 
 export interface LoginFormData {
