@@ -127,7 +127,7 @@ function App(): JSX.Element {
           }
           createBall()
         } 
-        if (pack.medicinePocket.length < 10) {
+        if (pack.medicinePocket.length < 15) {
           console.log('CREATING MEDICINE')
           const createMedicine = async (): Promise<void> => {
             await packService.createMedicine(revive)
@@ -139,7 +139,7 @@ function App(): JSX.Element {
           createMedicine()
         } 
         
-        if (pack.medicinePocket.length >= 10 && pack.ballPocket.length >= 5) {
+        if (pack.medicinePocket.length >= 15 && pack.ballPocket.length >= 5) {
           console.log('FULL PACK')
           const changeStatus = async (): Promise<void> => {
             const updatedPack = await packService.changePackStatus()
