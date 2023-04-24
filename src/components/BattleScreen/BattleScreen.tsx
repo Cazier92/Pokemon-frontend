@@ -131,6 +131,19 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   }, [partyPokemon])
 
   useEffect((): void => {
+    if (partyPokemon)
+    if (partyPokemon.moveSet[0].name) {
+
+    } else {
+      const findMoves = async (): Promise<void> => {
+        const updatedPokemon = await pokemonService.findPokemon(partyPokemon._id)
+        setPartyPokemon(updatedPokemon)
+      }
+      findMoves()
+    }
+  }, [partyPokemon])
+
+  useEffect((): void => {
     if (fullParty) {
       fullParty.forEach(pokemon => {
         if (pokemon.currentHP >= 0) {
@@ -738,7 +751,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
         }
       }
   
-  
+      
   
       
         
