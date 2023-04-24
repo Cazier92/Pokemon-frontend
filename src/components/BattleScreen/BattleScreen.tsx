@@ -1064,6 +1064,16 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       )
     }
 
+  } else if (newPokemon) {
+    return (
+      <>
+      <div className='battle-screen'>
+        <p>All your pokemon are fainted!!!</p>
+        <button onClick={() => battleUnInit()}>Return to game</button>
+        <canvas id='battle-canvas'></canvas>
+      </div>
+      </>
+    )
   } else {
     return (
       <>

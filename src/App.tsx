@@ -180,8 +180,12 @@ function App(): JSX.Element {
   useEffect((): void => {
     if (userProfile && userProfile.party && userProfile.party.length) {
       const findPartyPokemon = async (): Promise<void> => {
-        const partyPokemon = await pokemonService.findPokemon(userProfile.party[0])
-        setPartyPokemon(partyPokemon)
+        // const partyPokemon = await pokemonService.findPokemon(userProfile.party[0])
+        // setPartyPokemon(partyPokemon)
+        const currentPartyPokemon = await pokemonService.populatePartyPokemon()
+        if (typeof currentPartyPokemon !== 'string') {
+          setPartyPokemon(currentPartyPokemon)
+        }
       }
       findPartyPokemon()
     }

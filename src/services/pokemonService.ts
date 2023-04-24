@@ -118,6 +118,17 @@ async function newMove( id: Pokemon['_id'], moveData: LearnMoveForm ): Promise<P
   }
 }
 
+async function populatePartyPokemon(): Promise<Pokemon | string> {
+  try {
+    const res = await fetch(`${BASE_URL}/populateParty`, {
+      headers: { 'Authorization': `Bearer ${tokenService.getToken()}` },
+    })
+    return await res.json() as Pokemon | string
+  } catch (error) {
+    throw error
+  }
+}
+
 export {
   getAllPokemon,
   showParty,
@@ -128,4 +139,5 @@ export {
   levelUp,
   evolve,
   newMove,
+  populatePartyPokemon,
 }
