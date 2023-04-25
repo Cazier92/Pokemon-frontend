@@ -15,13 +15,13 @@
 - [ ] Friend Requests
 
 ### Maps:
-- [ ] Map model
+- [X] Map model
 #### Map Model Must have:
-- [ ] Map Image URL
-- [ ] Pre-sort Collisions Data into array of arrays!
-- [ ] Collisions Data: Hard Boundaries
+- [X] Map Image URL
+- [-] Pre-sort Collisions Data into array of arrays!
+- [X] Collisions Data: Hard Boundaries
 - [ ] Collisions Data: Map Boundaries (crossing from one map to another)
-- [ ] Collisions Data: BattleZones 
+- [X] Collisions Data: BattleZones 
 - [ ] Collisions Data: Water Boundaries
 - [ ] Collisions Data: WaterFall Boundaries
 - [ ] Collisions Data: WhirlPool Boundaries
@@ -29,7 +29,7 @@
 - [ ] Link information to next map(s): Dependant on user current coordinates
 
 ### Items:
-- [ ] 
+
 
 ### README:
 - [ ] Proof of concept disclaimer: Not to be distributed + limitations
@@ -38,14 +38,14 @@
 
 ## Frontend:
 
-- [ ] Finish integrating practice JS code into TS/React(this)
+- [X] Finish integrating practice JS code into TS/React(this)
 - [ ] MAKE MOBILE FRIENDLY
 
 ### Components:
-- [ ] Pause Main Screen (when any component is displayed)
+- [X] Pause Main Screen (when any component is displayed)
 - [ ] Save Screen Component
 - [ ] Dialogue Box Component
-- [ ] Battle Screen Component
+- [X] Battle Screen Component
 - [ ] Party Component
 - [ ] Pack Component
 - [ ] Wallet Component
@@ -83,5 +83,5 @@
 
 
 ## Undecided Location:
-- [ ] Catch Pokemon Algorithm
-- [ ] Damage Algorithm
+- [X] Catch Pokemon Algorithm
+- [X] Damage Algorithm

@@ -297,10 +297,10 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   
       const context = canvas?.getContext('2d')
   
-          if (canvas) {
-            canvas.width = 1024
-            canvas.height = 576
-          }
+      if (canvas) {
+        canvas.width = 1024
+        canvas.height = 576
+      }
 
       if (context) {
         const player: Sprite = {
@@ -370,7 +370,7 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   
           const drawBoundary = (boundary: Boundary): void => {
             if (context) {
-              context.fillStyle = 'rgba(255, 0, 0, .5)'
+              context.fillStyle = 'rgba(255, 0, 0, .0)'
               context.fillRect(boundary.position.x, boundary.position.y, boundary.width, boundary.height)
   
             }
@@ -592,7 +592,23 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   
   
           return (
-            <>
+            <main>
+              <div className='test-width'>
+                <div className='left-width'></div>
+                <div className='right-width'></div>
+              </div>
+              <div className='game-screen'>
+                <div className='game-menu'>
+                  <button className='menu-btn'>View Party</button>
+                  <button className='menu-btn'>View Pack</button>
+                  <button className='menu-btn'>Save Game</button>
+                </div>
+                <canvas id='canvas'></canvas>
+                  {battleActive ? (
+                  <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} setNewPokemon={setNewPokemon} userProfile={userProfile} partyPokemon={partyPokemon} capPokemon={capPokemon} setPartyPokemon={setPartyPokemon} setUserProfile={setUserProfile} user={user}/>
+                  ) : (<></>) }
+  
+                </div>
               <div className='d-pad'>
                 <div className='up-div'>
                   {up ? 
@@ -633,15 +649,7 @@ const MainGame = (props: MainGameProps): JSX.Element => {
                   </>)}
                 </div>
               </div>
-              <canvas id='canvas'></canvas>
-              {/* {!gameStarted ? (
-                <button onClick={() => handleStart()}>Start Game</button>
-              ) : (<></>)} */}
-              {/* <button onClick={() => battleUnInit()}>Test</button> */}
-              {battleActive ? (
-              <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} setNewPokemon={setNewPokemon} userProfile={userProfile} partyPokemon={partyPokemon} capPokemon={capPokemon} setPartyPokemon={setPartyPokemon} setUserProfile={setUserProfile} user={user}/>
-              ) : (<></>) }
-            </>
+            </main>
           )
     
 

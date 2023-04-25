@@ -2,8 +2,9 @@
   position: absolute;
   background-color: white;
   height: 100vh;
-  width: 100;
-  top: 35vh;
+  width: 100vw;
+  z-index: 1;
+  /* top: 35vh; */
 }
 
 #battle-canvas {
@@ -446,4 +447,8 @@
   text-align: center;
   font-size: 5vmin;
   cursor: pointer;
+}
+
+@media screen and (max-width: 900px) {
+  
 }

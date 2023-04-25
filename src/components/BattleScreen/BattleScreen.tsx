@@ -95,7 +95,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       setFullParty(party)
     }
     findParty()
-  }, [])
+  }, [checkParty])
 
   useEffect((): void => {
     const findPack = async (): Promise<void> => {
@@ -242,6 +242,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     const faintPokemon = async (): Promise<void> => {
       setOpponentFainted(false)
       battleUnInit()
+      setNewPokemon(undefined)
       await battleService.faintWildPokemon(newPokemon._id)
     }
 
@@ -371,6 +372,8 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
             setPartyPokemon(updatedPokemon)
           }
         }
+      } else {
+        faintPokemon()
       }
     }
 
@@ -473,6 +476,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
                 setShowErrMsg(true)
                 setEtherPok(undefined)
                 setEtherMove(undefined)
+                setCheckParty(!checkParty)
               } else {
                 console.log(medResponse)
                 setUserProfile(medResponse[0])
@@ -492,6 +496,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
                 setTarget(partyPokemon)
                 setAttacker(foundOpponent)
                 setMedMsg(medResponse[2])
+                setCheckParty(!checkParty)
                 setShowMedMsg(true)
                 setEtherPok(undefined)
                 setEtherMove(undefined)
@@ -504,6 +509,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               setShowPack(false)
               setShowMedicine(false)
               setShowPokList(false)
+              setCheckParty(!checkParty)
             }
           } else {
             setShowPack(false)
@@ -531,8 +537,8 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               setTarget(partyPokemon)
               setAttacker(foundOpponent)
               setMedMsg(medResponse[2])
+              setCheckParty(!checkParty)
               setShowMedMsg(true)
-  
           }
           }
         }
@@ -773,7 +779,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       
       return (
         <div className='battle-screen'>
-          <button onClick={battleUnInit}>finish battle</button>
+          {/* <button onClick={battleUnInit}>finish battle</button> */}
           {newPokemon ? 
           (<>
           <div className='health-box' id='opponent-health'>

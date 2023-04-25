@@ -9,6 +9,8 @@ interface NavBarProps {
   handleLogout: () => void;
 }
 
+import './NavBar.css'
+
 const NavBar = (props: NavBarProps): JSX.Element => {
   const { user, handleLogout } = props
   
@@ -16,11 +18,11 @@ const NavBar = (props: NavBarProps): JSX.Element => {
     <nav>
       {user ?
         <ul>
-          <li>Welcome, {user.name}</li>
-          <li><NavLink to="/profiles">Profiles</NavLink></li>
+          {/* <li>Welcome, {user.name}</li> */}
+          {/* <li><NavLink to="/profiles">Profiles</NavLink></li> */}
           <li><NavLink to="/change-password">Change Password</NavLink></li>
-          <li><NavLink to="" onClick={handleLogout}>LOG OUT</NavLink></li>
           <li><NavLink to="/maingame">Play Game</NavLink></li>
+          <li><NavLink to="" onClick={handleLogout}>LOG OUT</NavLink></li>
         </ul>
       :
         <ul>
