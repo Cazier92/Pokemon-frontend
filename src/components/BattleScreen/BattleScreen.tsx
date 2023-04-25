@@ -88,6 +88,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   const [etherPok, setEtherPok] = useState<Pokemon>()
   const [showEtherMoves, setShowEtherMoves] = useState<boolean>(false)
   const [showEtherTxt, setShowEtherTxt] = useState<boolean>(false)
+  const [selectedPokId, setSelectedPokId] = useState<string>()
 
   useEffect((): void => {
     const findParty = async (): Promise<void> => {
@@ -96,6 +97,23 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
     }
     findParty()
   }, [checkParty])
+
+  useEffect((): void => {
+    if (partyPokemon && fullParty) {
+      if (selectedPokId) {
+        if (selectedPokId !== partyPokemon._id) {
+          const findSelected = async (): Promise<void> => {
+            const selectedPok = await pokemonService.findPokemon(selectedPokId)
+            setPartyPokemon(selectedPok)
+            console.log('PARTY POKEMON CHANGED')
+          }
+          findSelected()
+        }
+      } else {
+        setSelectedPokId(partyPokemon._id)
+      }
+    }
+  }, [partyPokemon, fullParty])
 
   useEffect((): void => {
     const findPack = async (): Promise<void> => {
@@ -241,9 +259,14 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
   if (newPokemon && partyPokemon) {
     const faintPokemon = async (): Promise<void> => {
       setOpponentFainted(false)
-      battleUnInit()
+      endBattle()
       setNewPokemon(undefined)
       await battleService.faintWildPokemon(newPokemon._id)
+    }
+
+    const endBattle = (): void => {
+      setPartyPokemon(fullParty[0])
+      battleUnInit()
     }
 
     const continueBattle = (): void => {
@@ -652,6 +675,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
       if (pokemon._id !== partyPokemon._id && pokemon.currentHP > 0) {
         const newPartyPok = await pokemonService.findPokemon(pokemon._id)
         setPartyPokemon(newPartyPok)
+        setSelectedPokId(newPartyPok._id)
         handleShowNone()
         setShowContinue(false)
       }
@@ -857,11 +881,11 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
             {viableParty ? 
             (<>
               <button onClick={() => continueBattle()}>Continue?</button>
-              <button onClick={() => battleUnInit()}>Run?</button>
+              <button onClick={() => endBattle()}>Run?</button>
             </>) 
             : 
             (<>
-              <button onClick={() => battleUnInit()}>End Battle</button>
+              <button onClick={() => endBattle()}>End Battle</button>
             </>)}
           </div>) 
           : (<></>)}
@@ -954,7 +978,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               <div className='option-div' onClick={() => handleShowParty()}>
                 <p className='option-text'>Pokémon</p>
               </div>
-              <div className='option-div' onClick={battleUnInit}>
+              <div className='option-div' onClick={() => endBattle()}>
                 <p className='option-text'>Run</p>
               </div>
             </div>
@@ -1001,7 +1025,7 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
                 )
               }
               <div className='party-close'>
-                <button onClick={() => battleUnInit()} className='menu-close-btn'>Cancel</button>
+                <button onClick={() => endBattle()} className='menu-close-btn'>Cancel</button>
               </div>
             </div>
           ) : (<></>)}
