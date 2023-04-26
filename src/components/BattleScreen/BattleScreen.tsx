@@ -985,22 +985,25 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
           </div>
           {showParty ? (
             <div className='party-menu'>
-              {
-                fullParty.map((pokemon) => 
-                <div className='pokemon' onClick={() => handleChangePokemon(pokemon)}>
-                  <p>{capPokemon(pokemon)}</p>
-                  <img src={pokemon.spriteFront} alt="" />
-                  <p className='party-level'>Lv: {pokemon.level}</p>
-                  <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{Math.floor(pokemon.totalHP)} HP</p>
-                  {pokemon._id === partyPokemon._id || pokemon.currentHP <= 0 ? (<></>) : 
-                  (<>
-                    <div>
-                      <p>Choose this pokemon!</p>
-                    </div>
-                  </>)}
-                </div>
-                )
-              }
+              <div className='party-list'>
+                {
+                  fullParty.map((pokemon) => 
+                  <div className='pokemon' onClick={() => handleChangePokemon(pokemon)}>
+                    <p className='pokemon-list-name'>{capPokemon(pokemon)}</p>
+                    <img src={pokemon.spriteFront} alt="" />
+                    <p className='party-level'>Lv: {pokemon.level}</p>
+                    <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{Math.floor(pokemon.totalHP)} HP</p>
+                    {pokemon._id === partyPokemon._id || pokemon.currentHP <= 0 ? (<></>) : 
+                    (<>
+                      <div>
+                        <p>Choose this pokemon!</p>
+                      </div>
+                    </>)}
+                  </div>
+                  )
+                }
+
+              </div>
               <div className='party-close'>
                 <button onClick={() => handleShowNone()} className='menu-close-btn'>Close</button>
               </div>
@@ -1034,22 +1037,25 @@ const BattleScreen = (props: BattleScreenProps): JSX.Element => {
               <div className='pokemon-med-selection'>
                 <p>Please choose a pokemon to use {med.name} on:</p>
               </div>
-              {
-                fullParty.map((pokemon) => 
-                <div className='pokemon' onClick={() => handleUseMedicine(pokemon)}>
-                  <p>{capPokemon(pokemon)}</p>
-                  <img src={pokemon.spriteFront} alt="" />
-                  <p className='party-level'>Lv: {pokemon.level}</p>
-                  <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{Math.floor(pokemon.totalHP)} HP</p>
-                  {pokemon._id === partyPokemon._id || pokemon.currentHP <= 0 ? (<></>) : 
-                  (<>
-                    <div>
-                      <p>Choose this pokemon!</p>
-                    </div>
-                  </>)}
-                </div>
-                )
-              }
+              <div className='med-party-list'>
+                {
+                  fullParty.map((pokemon) => 
+                  <div className='pokemon' onClick={() => handleUseMedicine(pokemon)}>
+                    <p>{capPokemon(pokemon)}</p>
+                    <img src={pokemon.spriteFront} alt="" />
+                    <p className='party-level'>Lv: {pokemon.level}</p>
+                    <p className='party-hp'>{Math.floor(pokemon.currentHP)}/{Math.floor(pokemon.totalHP)} HP</p>
+                    {pokemon._id === partyPokemon._id || pokemon.currentHP <= 0 ? (<></>) : 
+                    (<>
+                      <div>
+                        <p>Choose this pokemon!</p>
+                      </div>
+                    </>)}
+                  </div>
+                  )
+                }
+
+              </div>
               <div className='party-close'>
                 <button onClick={() => cancelMed()} className='menu-close-btn'>Cancel</button>
               </div>
