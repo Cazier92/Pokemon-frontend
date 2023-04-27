@@ -33,6 +33,7 @@ const Instructions = (props: InstructionsProps): JSX.Element => {
     setShowPack(false)
     setShowChoose(false)
     setShowRun(false)
+    setShowBattle(false)
   }
 
   const handleShowMovement = (): void => {
@@ -100,7 +101,7 @@ const Instructions = (props: InstructionsProps): JSX.Element => {
       : (<></>)}
       {showBattle ? 
       (<>
-        <div className='fight-container'>
+        <div className='inst-container'>
           <h5>Goal:</h5>
           <p>The goal is to either cause the other pokémon to faint, or to catch it to add it to your collection. A pokémon will faint when it's HP reaches 0. This includes opponent pokémon, as well as your own pokémon.</p>
           <h5>Battling:</h5>
@@ -118,9 +119,34 @@ const Instructions = (props: InstructionsProps): JSX.Element => {
       : (<></>)}
       {showFight ? 
       (<>
-        <div className='fight-container'>
+        <div className='inst-container'>
           <h5>Moves:</h5>
-          <p>Selecting "Fight" during a battle will display each of a pokémon's moves.</p>
+          <p>Selecting "Fight" during a battle will display each of a pokémon's moves. Each move will have a certain amount of PP ("Power Points") associated with it. Using a move will decrease that move's PP by 1. Once a move's PP reaches 0, it cannot be used anymore until the PP is restored, either by healing your pokémon, or using certain medicines on that pokémon to restore that move.</p>
+          <h5>Types:</h5>
+          <p>Each pokémon species has one to two types associated with it. Each move also has one type associated with it. Each type has corresponding strengths and weaknesses to other types. If one or both of a pokémon's types is weak to the type of a move used against it, the move will cause more damage. If one or both of a pokémon's types is strong against the type of move used against it, the move will cause less damage. If both of a pokémon's types are either weak or strong against a move's type, the damage a move causes will be significantly greater or less respectively. In addition, some types are completely resistant to other types (ex: Flying type pokémon are completely unaffected by Ground type moves, although Ground type pokémon are weak against Flying type moves). If a pokémon has two types, one of which are weak to a move, and another of which are strong against a move, the move will exact a neutral (base) amount of damage.</p>
+          <h5>Status Conditions:</h5>
+          <p>Some moves may have a chance of inflicting a status condition (generally on the pokémon it is used against, with some exceptions). Status conditions affect how a pokémon performs in battle.</p>
+          <h6>Burn:</h6>
+          <p>A burn will decrease the amount of damage a pokémon inflicts on other pokémon, as well as causing it additional damage at the end of each turn. This condition may go away on it's own.</p>
+          <h6>Freeze:</h6>
+          <p>A frozen pokémon will be unable to fight until it thaws out. If not treated, this condition may go away on it's own, but it is unknown when this will happen, and if you do not have medicine to treat the condition, you will have to continue battling until it thaws.</p>
+          <h6>Paralysis:</h6>
+          <p>A paralyzed pokémon may be unable to fight, but there is a chance that it will continue to be able to use moves each turn. This condition may go away on it's own.</p>
+          <h6>Poison:</h6>
+          <p>A poisoned pokémon will take additional damage at the end of each turn. This condition will not resolve on it's own.</p>
+          <h6>Confused:</h6>
+          <p>A confused pokémon may hurt itself during battle, rather than attacking the other pokémon. This condition may resolve on it's own.</p>
+        </div>
+        <button className='return' onClick={() => handleReturn()}>Return</button>
+      </>) 
+      : (<></>)}
+      {showPack ? 
+      (<>
+        <div className='inst-container'>
+          <h5>Pockets:</h5>
+          <p>Your pack has four pockets in it; it has a medicine pocket, a machine pocket, a ball pocket, and a key item pocket. During a battle, only your medicine and ball pockets are available to use.</p>
+          <h5>Medicine Pocket:</h5>
+          <p>Your medicine pocket contains any medicines you have obtained (you are provided some when you first start the game). Medicines can be used inside and outside of battle to restore a pokémon's health, status conditions it may have occurred in battle, and restore PP to it's moves. Each medicine will have a description to notify you of it's effects. If medicine is used during battle, you forfeit using a move during that turn. The medicine will be used, and then the opponent pokémon will immediately attack.</p>
         </div>
         <button className='return' onClick={() => handleReturn()}>Return</button>
       </>) 
