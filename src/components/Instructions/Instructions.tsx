@@ -148,6 +148,8 @@ const Instructions = (props: InstructionsProps): JSX.Element => {
           <h5>Medicine Pocket:</h5>
           <p>Your medicine pocket contains any medicines you have obtained (you are provided some when you first start the game). Medicines can be used inside and outside of battle to restore a pokémon's health, status conditions it may have occurred in battle, and restore PP to it's moves. Each medicine will have a description to notify you of it's effects. If medicine is used during battle, you forfeit using a move during that turn. The medicine will be used, and then the opponent pokémon will immediately attack.</p>
         </div>
+        <h5>Ball Pocket:</h5>
+        <p>Balls may only be used in battle. Balls are used to capture wild pokémon in battle. Each ball type has a specific bonus attatched to it, which will have either an increased or neutral effect in the chance of catching a wild pokémon. A ball will more effectively catch a pokémon if it's HP has been lowered by fighting with your pokémon first. A ball will be additionally more effective if the pokémon you are trying to catch has a status condition.</p>
         <button className='return' onClick={() => handleReturn()}>Return</button>
       </>) 
       : (<></>)}
