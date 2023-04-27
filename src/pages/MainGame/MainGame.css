@@ -6,6 +6,7 @@ main {
   /* margin-top: 5vh; */
   /* height: 200vh; */
   position: relative;
+  top: 5vh;
 }
 
 canvas {
@@ -14,9 +15,12 @@ canvas {
 }
 
 .test-width {
+  position: absolute;
   height: 2vh;
   width: 100%;
   background-color: blue;
+  z-index: 20;
+  bottom: 23%;
 }
 
 .left-width {
@@ -132,4 +136,45 @@ canvas {
 
 @media screen and (max-width: 900px) {
   
+#up {
+  position: relative;
+  left: 46.5%;
+}
+
+#down {
+  position: relative;
+  left: 46.5%;
+}
+
+#left {
+  position: relative;
+  left: 40%;
+}
+
+#right {
+  position: relative;
+  right: 40%;
+}
+}
+
+@media screen and (max-width: 600px) {
+  #up {
+    position: relative;
+    left: 45.3%;
+  }
+  
+  #down {
+    position: relative;
+    left: 45.3%;
+  }
+  
+  #left {
+    position: relative;
+    left: 36%;
+  }
+  
+  #right {
+    position: relative;
+    right: 36%;
+  }
 }

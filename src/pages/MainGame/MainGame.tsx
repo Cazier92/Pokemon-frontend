@@ -24,6 +24,7 @@ import { User } from '../../types/models'
 // components
 
 import BattleScreen from '../../components/BattleScreen/BattleScreen'
+import Instructions from '../../components/Instructions/Instructions'
 
 interface MainGameProps {
   allPokemon: Pokemon[];
@@ -52,10 +53,11 @@ const MainGame = (props: MainGameProps): JSX.Element => {
 
   const [battleActive, setBattleActive] = useState<boolean>(false)
   const [gameStarted, setGameStarted] = useState<boolean>(false)
-  const [up, setUp] = useState<boolean>(false)
-  const [down, setDown] = useState<boolean>(false)
-  const [left, setLeft] = useState<boolean>(false)
-  const [right, setRight] = useState<boolean>(false)
+  // const [up, setUp] = useState<boolean>(false)
+  // const [down, setDown] = useState<boolean>(false)
+  // const [left, setLeft] = useState<boolean>(false)
+  // const [right, setRight] = useState<boolean>(false)
+  const [showInstructions, setShowInstructions] = useState<boolean>(false)
   const navigate = useNavigate()
 
   const handleStart = () => {
@@ -66,26 +68,26 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   let newX = 0
   let newY = 0
   
-  // let up = false
-  // let down = false
-  // let left = false
-  // let right = false
+  let up = false
+  let down = false
+  let left = false
+  let right = false
 
   const handleKeyDown = (e: KeyboardEvent) => {
-    switch (e.key) {
-      case 'w':
-        keys.w.pressed = true
-        break
-      case 'a':
-        keys.a.pressed = true
-        break
-      case 's':
-        keys.s.pressed = true
-        break
-      case 'd':
-        keys.d.pressed = true
-        break
-    }
+      switch (e.key) {
+        case 'w':
+          keys.w.pressed = true
+          break
+        case 'a':
+          keys.a.pressed = true
+          break
+        case 's':
+          keys.s.pressed = true
+          break
+        case 'd':
+          keys.d.pressed = true
+          break
+      }
   }
 
 
@@ -133,6 +135,8 @@ const MainGame = (props: MainGameProps): JSX.Element => {
       pressed: false
     },
   }
+
+
   const upKey = document.getElementById('up')
   const downKey = document.getElementById('down')
   const leftKey = document.getElementById('left')
@@ -412,6 +416,7 @@ const MainGame = (props: MainGameProps): JSX.Element => {
                   ) {
                     window.cancelAnimationFrame(animationId)
                     setBattleActive(true)
+                    setShowInstructions(false)
                     handleUpdateProfile({
                       coordinates: {
                         x: (userProfile.coordinates.x + newX),
@@ -593,22 +598,27 @@ const MainGame = (props: MainGameProps): JSX.Element => {
   
           return (
             <main>
-              <div className='test-width'>
+              {/* <div className='test-width'>
                 <div className='left-width'></div>
                 <div className='right-width'></div>
-              </div>
+              </div> */}
+              {showInstructions ? 
+              (<>
+              <Instructions setShowInstructions={setShowInstructions}/>
+              </>) 
+              : (<></>)}
               <div className='game-screen'>
                 <div className='game-menu'>
                   <button className='menu-btn'>View Party</button>
                   <button className='menu-btn'>View Pack</button>
+                  <button className='menu-btn' onClick={() => setShowInstructions(!showInstructions)}>Instructions</button>
                   <button className='menu-btn'>Save Game</button>
                 </div>
                 <canvas id='canvas'></canvas>
                   {battleActive ? (
                   <BattleScreen battleUnInit={battleUnInit} newPokemon={newPokemon} setNewPokemon={setNewPokemon} userProfile={userProfile} partyPokemon={partyPokemon} capPokemon={capPokemon} setPartyPokemon={setPartyPokemon} setUserProfile={setUserProfile} user={user}/>
                   ) : (<></>) }
-  
-                </div>
+              </div>
               <div className='d-pad'>
                 <div className='up-div'>
                   {up ? 
