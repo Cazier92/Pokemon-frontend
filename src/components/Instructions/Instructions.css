@@ -18,3 +18,17 @@
   position: absolute;
   top: 95%;
 }
+
+.inst-list {
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.inst-list:hover {
+  background-color: aqua;
+}
+
+.fight-container {
+  overflow-y: scroll;
+  height: 75%;
+}
