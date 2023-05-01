@@ -249,7 +249,6 @@ function App(): JSX.Element {
   }
 
 
-
   return (
     <>
       <NavBar user={user} handleLogout={handleLogout} />

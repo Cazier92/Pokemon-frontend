@@ -204,7 +204,6 @@ const MainGame = (props: MainGameProps): JSX.Element => {
       const battleZonesData: number[] = currentMap.battleZones
   
   
-  
       const collisionMap: number[][] = []
       const battleZoneMap: number[][] = []
     
@@ -683,7 +682,7 @@ const MainGame = (props: MainGameProps): JSX.Element => {
       }
 
       return (
-        <>
+        <main>
           <div className='starter-pok-header'>
             <h1>Please choose a starter pokemon:</h1>
             <p>This decision can only be made once!</p>
@@ -710,7 +709,7 @@ const MainGame = (props: MainGameProps): JSX.Element => {
               </>
             )}
           </div>
-        </>
+        </main>
       )
     }
 
